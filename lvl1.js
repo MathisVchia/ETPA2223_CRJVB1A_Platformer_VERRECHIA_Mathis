@@ -73,12 +73,48 @@ export class lvl1 extends Phaser.Scene{
         
         if (this.interactButton.isDown){
             this.recruterRenard();
+            console.log ("lance fonction")
         }
 
-
-
-                
+              
 
     }
-
+    recruterRenard() {
+        // Vérifie si le joueur est assez proche du renard
+        if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y) < 500) {
+          // Fait disparaître la renard actuelle
+          if (this.renard) {
+            this.renard.destroy();
+          }
+          // Crée un nouveau sprite de renard derrière le joueur
+          this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
+          this.physics.add.collider(this.renard, this.plateformes);
+          // Fait suivre le joueur au nouveau sprite de renard
+          this.physics.add.collider(this.renard, this.player);
+          // Ajoute un comportement de copie des mouvements du joueur
+          this.renard.body.setCollideWorldBounds(true);
+          this.renard.setBounce(0.2);
+      
+          // Met à jour la position et la vitesse du renard à chaque frame pour qu'il reste derrière le joueur
+          this.update = () => {
+            this.renard.setVelocity(this.player.body.velocity.x, this.player.body.velocity.y);
+            const distanceX = this.renard.x - this.player.x;
+            const distanceY = this.renard.y - this.player.y;
+            if (distanceX > 150) {
+              this.renard.setVelocityX(-150);
+            } else if (distanceX < -150) {
+              this.renard.setVelocityX(150);
+            } else {
+              this.renard.setVelocityX(0);
+            }
+            if (distanceY > 128) {
+              this.renard.setVelocityY(-128);
+            } else if (distanceY < -128) {
+              this.renard.setVelocityY(128);
+            } else {
+              this.renard.setVelocityY(0);
+            }
+          };
+        }
+      }
 }
