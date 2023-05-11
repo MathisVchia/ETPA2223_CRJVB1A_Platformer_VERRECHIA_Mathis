@@ -2,7 +2,7 @@
 
 //import {menu as menu} from "./script_menu.js"
 
-import {lvl1 as lvl1} from "./script_lvl1.js"
+import { lvl1 as lvl1} from "/lvl1.js"
 
 
 
@@ -16,7 +16,7 @@ var config = {
     }},
     pixelArt:true,
     input:{gamepad:true},
-    scene: [menu,lvl1],
+    scene: [lvl1],
         
 };
 
