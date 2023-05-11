@@ -8,16 +8,15 @@
     ],
     "fileStates": {
     },
-    "last.imagePath": "D:/mario like/assets/environnement",
-    "map.height": 30,
+    "last.imagePath": "E:/mario like/assets/environnement",
+    "map.height": 40,
     "map.lastUsedFormat": "json",
     "map.tileHeight": 128,
     "map.tileWidth": 128,
-    "map.width": 350,
+    "map.width": 75,
     "openFiles": [
     ],
     "project": "Kami.tiled-project",
-    "property.type": "bool",
     "recentFiles": [
     ],
     "tileset.embedInMap": true,
