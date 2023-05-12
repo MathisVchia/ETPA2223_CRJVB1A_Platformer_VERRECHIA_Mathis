@@ -112,7 +112,7 @@ export class lvl1 extends Phaser.Scene{
     
         // Crée un nouveau sprite de renard derrière le joueur
         this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
-        this.physics.add.collider(this.renard, this.plateformes);
+        //this.physics.add.collider(this.renard, this.plateformes);
         this.renard.body.setAllowGravity(false);
 
   
@@ -148,7 +148,7 @@ export class lvl1 extends Phaser.Scene{
             // Arrête le renard et désactive le suivi du joueur
             this.renardIsFollowing = false;
             this.renard.setVelocity(0, 0);
-            this.physics.moveTo(this.renard,pointer.worldX,pointer.worldY,150);
+            this.physics.moveTo(this.renard,pointer.worldX,pointer.worldY,200);
             this.zoneA = pointer.worldX;
             this.zoneB = pointer.worldY;
 

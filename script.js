@@ -8,7 +8,7 @@ import { lvl1 as lvl1} from "/lvl1.js"
 
 var config = {
     type: Phaser.AUTO,
-    width: 4160, height: 3456,
+    width: 1920, height: 1080,
     physics: {
         default: 'arcade',
         arcade: {
