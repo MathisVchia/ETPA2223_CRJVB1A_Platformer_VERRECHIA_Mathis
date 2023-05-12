@@ -71,50 +71,77 @@ export class lvl1 extends Phaser.Scene{
             this.player.setVelocityY(-600);
         }
         
-        if (this.interactButton.isDown){
+            // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
+        const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
+        if (distanceToRenard < 150 && this.interactButton.isDown && !this.renardIsFollowing) {
             this.recruterRenard();
-            console.log ("lance fonction")
+            this.renardIsFollowing = true;
+        }
+        
+        // Si le renard suit déjà le joueur, met à jour sa position pour qu'il reste derrière le joueur
+        if (this.renardIsFollowing) {
+            const targetX = this.player.x - 150;
+            const targetY = this.player.y - 128;
+
+            const deltaX = targetX - this.renard.x;
+            const deltaY = targetY - this.renard.y;
+
+            const speed = 200;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (distance > 1) {
+                const moveX = (deltaX / distance) * speed;
+                const moveY = (deltaY / distance) * speed;
+
+                this.renard.setVelocity(moveX, moveY);
+            } else {
+                this.renard.setVelocity(0, 0);
+            }
         }
 
               
 
     }
+
     recruterRenard() {
-        // Vérifie si le joueur est assez proche du renard
-        if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y) < 500) {
-          // Fait disparaître la renard actuelle
-          if (this.renard) {
+        // Vérifie si un renard existe déjà
+        if (this.renard) {
+            // Détruit le renard actuel
             this.renard.destroy();
-          }
-          // Crée un nouveau sprite de renard derrière le joueur
-          this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
-          this.physics.add.collider(this.renard, this.plateformes);
-          // Fait suivre le joueur au nouveau sprite de renard
-          this.physics.add.collider(this.renard, this.player);
-          // Ajoute un comportement de copie des mouvements du joueur
-          this.renard.body.setCollideWorldBounds(true);
-          this.renard.setBounce(0.2);
-      
-          // Met à jour la position et la vitesse du renard à chaque frame pour qu'il reste derrière le joueur
-          this.update = () => {
-            this.renard.setVelocity(this.player.body.velocity.x, this.player.body.velocity.y);
-            const distanceX = this.renard.x - this.player.x;
-            const distanceY = this.renard.y - this.player.y;
-            if (distanceX > 150) {
-              this.renard.setVelocityX(-150);
-            } else if (distanceX < -150) {
-              this.renard.setVelocityX(150);
-            } else {
-              this.renard.setVelocityX(0);
-            }
-            if (distanceY > 128) {
-              this.renard.setVelocityY(-128);
-            } else if (distanceY < -128) {
-              this.renard.setVelocityY(128);
-            } else {
-              this.renard.setVelocityY(0);
-            }
-          };
         }
-      }
+    
+        // Crée un nouveau sprite de renard derrière le joueur
+        this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
+        this.physics.add.collider(this.renard, this.plateformes);
+
+        // Ajoute une gravité au renard
+        this.renard.body.setGravityY(300);
+    
+        // Ajoute un comportement de suivi du joueur
+        this.renard.body.setCollideWorldBounds(true);
+        this.renard.setBounce(0.2);
+    
+        // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
+         // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
+        this.update = () => {
+            const targetX = this.player.x - 150;
+            const targetY = this.player.y - 128;
+
+            const deltaX = targetX - this.renard.x;
+            const deltaY = targetY - this.renard.y;
+
+            const speed = 200;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (distance > 1) {
+                const moveX = (deltaX / distance) * speed;
+                const moveY = (deltaY / distance) * speed;
+
+                this.renard.setVelocity(moveX, moveY);
+            } else {
+                this.renard.setVelocity(0, 0);
+            }
+        }
+    }
+    
 }
