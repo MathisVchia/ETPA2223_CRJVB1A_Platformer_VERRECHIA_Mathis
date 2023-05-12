@@ -100,6 +100,7 @@ export class lvl1 extends Phaser.Scene{
     
         // Ajoute un événement de clic pour donner l'ordre au renard de se rendre à un endroit précis avec la souris
         this.input.on('pointerdown', this.donnerOrdreRenard, this);
+        console.log(this.renard.y);
     }
 
     recruterRenard() {
@@ -147,57 +148,25 @@ export class lvl1 extends Phaser.Scene{
             // Arrête le renard et désactive le suivi du joueur
             this.renardIsFollowing = false;
             this.renard.setVelocity(0, 0);
-    
-            const destinationX = pointer.worldX;
-            const destinationY = pointer.worldY;
-    
-            const deltaX = destinationX - this.renard.x;
-            const deltaY = destinationY - this.renard.y;
-    
-            const distanceToDestination = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
-            const angleToDestination = Math.atan2(deltaY, deltaX);
-    
-            const speed = 200;
-    
-            if (distanceToDestination > 50) {
-                // Si le renard n'a pas encore atteint sa destination, continue à avancer vers elle
-                const moveX = Math.cos(angleToDestination) * speed;
-                const moveY = Math.sin(angleToDestination) * speed;
-    
-                this.renard.setVelocity(moveX, moveY);
-            } else {
-                // Si le renard a atteint sa destination, retourne se placer derrière le joueur
-                const player = this.joueur;
-                const playerAngle = player.angle - Math.PI;
-    
-                const behindPlayerX = player.x + Math.cos(playerAngle) * 100;
-                const behindPlayerY = player.y + Math.sin(playerAngle) * 100;
-    
-                const distanceToPlayer = Math.sqrt(
-                    (behindPlayerX - this.renard.x) * (behindPlayerX - this.renard.x) +
-                    (behindPlayerY - this.renard.y) * (behindPlayerY - this.renard.y)
-                );
-    
-                const angleToPlayer = Math.atan2(behindPlayerY - this.renard.y, behindPlayerX - this.renard.x);
-    
-                if (distanceToPlayer > 50) {
-                    // Si le renard n'est pas encore derrière le joueur, continue à avancer vers lui
-                    const moveX = Math.cos(angleToPlayer) * speed;
-                    const moveY = Math.sin(angleToPlayer) * speed;
-    
-                    this.renard.setVelocity(moveX, moveY);
-                } else {
-                    // Si le renard est derrière le joueur, arrête de bouger et se place derrière le joueur
+            this.physics.moveTo(this.renard,pointer.worldX,pointer.worldY,150);
+            this.zoneA = pointer.worldX;
+            this.zoneB = pointer.worldY;
+
+             // Vérifie si le renard a atteint les coordonnées du pointer
+        this.time.addEvent({
+            delay: 100,
+            callback: () => {
+                const distanceToPointer = Phaser.Math.Distance.Between(this.renard.x, this.renard.y, this.zoneA, this.zoneB);
+                if (distanceToPointer < 10) {
+                    // Arrête le renard
                     this.renard.setVelocity(0, 0);
-    
-                    const moveX = Math.cos(playerAngle) * speed;
-                    const moveY = Math.sin(playerAngle) * speed;
-    
-                    this.renard.setVelocity(moveX, moveY);
+                    this.renardIsFollowing = true;
+                    this.physics.moveTo(this.renard, this.player.x - 150, this.player.y - 128, 200);
                 }
-            }
-        }
+            },
+            loop: true
+        });
+
     }
-    
+}
 }
