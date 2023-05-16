@@ -11,6 +11,8 @@ export class lvl1 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('clef', 'assets/objects/clef.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('porte', 'assets/objects/porte.png',
+        {frameWidth: 128, frameHeight : 128});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
@@ -21,6 +23,9 @@ export class lvl1 extends Phaser.Scene {
         this.player;
         this.renard;
         this.clef;
+        this.porte;
+
+        this.hasKey = false;
 
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
@@ -37,9 +42,14 @@ export class lvl1 extends Phaser.Scene {
         this.clef = this.physics.add.sprite(100, 3816, 'clef');
         this.clef.setCollideWorldBounds(true);
 
+        this.porte = this.physics.add.sprite(1000, 3816, 'porte');
+        this.porte.setCollideWorldBounds(true);
+        this.porte.body.setImmovable(true);
+
         this.physics.add.collider(this.player, this.plateformes);
         this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes);
+        this.physics.add.collider(this.renard, this.porte);
 
 
         // résolution de l'écran
@@ -82,8 +92,8 @@ export class lvl1 extends Phaser.Scene {
         }
     
         // Saut
-        if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-600);
+        if ((this.cursors.up.isDown) && (this.player.body.isTouching) {
+            this.player.setVelocityY(-400);
         }
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
@@ -122,6 +132,14 @@ export class lvl1 extends Phaser.Scene {
          this.physics.add.overlap(this.renard, this.clef, () => {
             console.log("ddjs")
             this.collectKey();
+        });
+
+        // Ajout collision joueur porte
+        this.physics.add.collider(this.player, this.porte, () =>{
+            if (this.hasKey === true){
+                console.log ("TU TOUCHE")
+                this.openDoor();
+            };
         });
     }
 
@@ -221,12 +239,14 @@ export class lvl1 extends Phaser.Scene {
           // Stocker la clef dans l'inventaire
           this.hasKey = true;
           console.log("TU AS LA CLEF");
-      
-          // Activer une capacité pour le joueur (ici, un changement de couleur)
-          if (this.hasKey) {
-            this.player.setTint(0x00FF00);
-          }
         });
+      }
+
+      openDoor() {
+        //Détecter si le joueur possède la clef
+        console.log("SESAME OUVRE TOI")
+        this.porte.destroy();
+        this.hasKey = false;
       }
 }
 
