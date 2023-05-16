@@ -9,6 +9,8 @@ export class lvl1 extends Phaser.Scene {
         {frameWidth : 128, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('clef', 'assets/objects/clef.png',
+        {frameWidth: 128, frameHeight : 128});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
@@ -18,6 +20,7 @@ export class lvl1 extends Phaser.Scene {
     create() {
         this.player;
         this.renard;
+        this.clef;
 
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
@@ -31,8 +34,12 @@ export class lvl1 extends Phaser.Scene {
         this.renard = this.physics.add.sprite(644, 3816, 'renard');
         this.renard.setCollideWorldBounds(true);
 
+        this.clef = this.physics.add.sprite(100, 3816, 'clef');
+        this.clef.setCollideWorldBounds(true);
+
         this.physics.add.collider(this.player, this.plateformes);
         this.physics.add.collider(this.renard, this.plateformes);
+        this.physics.add.collider(this.clef, this.plateformes);
 
 
         // résolution de l'écran
@@ -110,6 +117,12 @@ export class lvl1 extends Phaser.Scene {
         // Ajoute un événement de clic pour donner l'ordre au renard de se rendre à un endroit précis avec la souris
         this.input.on('pointerdown', this.donnerOrdreRenard, this);
         console.log(this.renard.y);
+
+         // Ajout de la collision entre le renard et la clef
+         this.physics.add.overlap(this.renard, this.clef, () => {
+            console.log("ddjs")
+            this.collectKey();
+        });
     }
 
     recruterRenard() {
