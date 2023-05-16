@@ -13,6 +13,8 @@ export class lvl1 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('porte', 'assets/objects/porte.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
+        {frameWidth: 128, frameHeight : 128});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
@@ -24,6 +26,7 @@ export class lvl1 extends Phaser.Scene {
         this.renard;
         this.clef;
         this.porte;
+        this.sanctuaire;
 
         this.hasKey = false;
 
@@ -33,8 +36,13 @@ export class lvl1 extends Phaser.Scene {
 
         this.plateformes.setCollisionByProperty({estSolid: true});
 
+        this.sanctuaire = this.physics.add.sprite(3000, 3816, 'sanctuaire');
+        this.sanctuaire.setCollideWorldBounds(true);
+        this.sanctuaire.body.setImmovable(true);
+
         this.player = this.physics.add.sprite(344, 3816, 'nikko');
         this.player.setCollideWorldBounds(true);
+        this.player.body.setGravityY(1000);
 
         this.renard = this.physics.add.sprite(644, 3816, 'renard');
         this.renard.setCollideWorldBounds(true);
@@ -45,6 +53,7 @@ export class lvl1 extends Phaser.Scene {
         this.porte = this.physics.add.sprite(1000, 3816, 'porte');
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
+
 
         this.physics.add.collider(this.player, this.plateformes);
         this.physics.add.collider(this.renard, this.plateformes);
@@ -82,6 +91,9 @@ export class lvl1 extends Phaser.Scene {
     }
 
     update() {
+
+        const isPlayerTouchingDoor = this.physics.overlap(this.player, this.door);
+        
         // ajout des moyens de déplacement du personnage
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-260);
@@ -92,8 +104,9 @@ export class lvl1 extends Phaser.Scene {
         }
     
         // Saut
-        if ((this.cursors.up.isDown) && (this.player.body.isTouching) {
-            this.player.setVelocityY(-400);
+        if (this.cursors.up.isDown && this.player.body.blocked.down){
+            console.log("SAUTE")
+            this.player.setVelocityY(-650);
         }
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
@@ -140,6 +153,30 @@ export class lvl1 extends Phaser.Scene {
                 console.log ("TU TOUCHE")
                 this.openDoor();
             };
+            if (this.hasKey === false) {
+                const delay = 3000; // Temps d'affichage en millisecondes
+            
+                const text = this.add.text(800, 3916, "Vous avez besoin d'une clé pour ouvrir la porte.", {
+                    font: "24px Arial",
+                    fill: "#ffffff"
+                });
+                text.setOrigin(0.5);
+            
+                this.time.delayedCall(delay, () => {
+                    text.destroy(); // Supprime le texte après le délai spécifié
+                });
+            }
+        });
+
+            // Ajout collision joueur sanctuaire
+        this.physics.add.overlap(this.player, this.sanctuaire, () => {
+            if (this.renardIsFollowing) {
+                // Détruit le renard actuel
+                this.renard.destroy();
+
+                // Réinitialise la variable renardIsFollowing
+                this.renardIsFollowing = false;
+            }
         });
     }
 
@@ -178,7 +215,10 @@ export class lvl1 extends Phaser.Scene {
 
                 this.renard.setVelocity(moveX, moveY);
             } else {
-                this.renard.setVelocity(0, 0);
+                if (this.player.velocity == 0){
+                    this.renard.setVelocity(0, 0);
+                    console.log("OK")
+                };
             }
         }
     }
