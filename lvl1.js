@@ -49,6 +49,7 @@ export class lvl1 extends Phaser.Scene {
         //this.cameras.main.setBounds(0,0,4160,3456);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.physics.add.overlap(this.player, this.renard, this.recrute.bind(this));
         this.interactButton = this.input.keyboard.addKey('E');
 
@@ -58,12 +59,17 @@ export class lvl1 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 12800, 12800);
         this.cameras.main.startFollow(this.player);
 =======
+=======
+>>>>>>> parent of 5f2aa5c (ajout systeme clef/porte)
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.interactButton = this.input.keyboard.addKey('E');
 
 
     }
+<<<<<<< HEAD
+>>>>>>> parent of 5f2aa5c (ajout systeme clef/porte)
+=======
 >>>>>>> parent of 5f2aa5c (ajout systeme clef/porte)
 
     update() {
@@ -179,6 +185,7 @@ export class lvl1 extends Phaser.Scene {
         });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (this.interactButton.isDown) {
             this.recrute();
             console.log("recrute")
@@ -219,6 +226,11 @@ export class lvl1 extends Phaser.Scene {
       }
 }
 
+=======
+    }
+}
+}
+>>>>>>> parent of 5f2aa5c (ajout systeme clef/porte)
 =======
     }
 }
