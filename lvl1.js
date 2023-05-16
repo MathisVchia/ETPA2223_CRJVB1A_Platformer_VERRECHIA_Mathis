@@ -15,6 +15,8 @@ export class lvl1 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
+        {frameWidth: 128, frameHeight : 128});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
@@ -27,6 +29,7 @@ export class lvl1 extends Phaser.Scene {
         this.clef;
         this.porte;
         this.sanctuaire;
+        this.ennemi;
 
         this.hasKey = false;
 
@@ -54,7 +57,11 @@ export class lvl1 extends Phaser.Scene {
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
 
+        this.ennemi = this.physics.add.sprite(2500, 3816, 'ennemi');
+        this.ennemi.setCollideWorldBounds(true);
+        this.ennemi.body.setImmovable(true);
 
+        this.physics.add.collider(this.player, this.ennemi);
         this.physics.add.collider(this.player, this.plateformes);
         this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes);
@@ -178,6 +185,7 @@ export class lvl1 extends Phaser.Scene {
                 this.renardIsFollowing = false;
             }
         });
+
     }
 
     recruterRenard() {
@@ -282,11 +290,14 @@ export class lvl1 extends Phaser.Scene {
         });
       }
 
-      openDoor() {
-        //Détecter si le joueur possède la clef
-        console.log("SESAME OUVRE TOI")
-        this.porte.destroy();
-        this.hasKey = false;
-      }
+    openDoor() {
+    //Détecter si le joueur possède la clef
+    console.log("SESAME OUVRE TOI")
+    this.porte.destroy();
+    this.hasKey = false;
+    }
+
+
+
 }
 
