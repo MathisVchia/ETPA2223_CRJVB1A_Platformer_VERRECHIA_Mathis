@@ -31,6 +31,7 @@ export class lvl1 extends Phaser.Scene {
         this.sanctuaire;
         this.ennemi;
         this.renard = null;
+        this.gameOver = false;
 
         this.hasKey = false;
 
@@ -66,7 +67,7 @@ export class lvl1 extends Phaser.Scene {
         this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes);
         this.physics.add.collider(this.renard, this.porte);
-        this.physics.add.collider(this.player, this.ennemi);
+        this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
 
         // résolution de l'écran
@@ -99,8 +100,6 @@ export class lvl1 extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.interactButton = this.input.keyboard.addKey('E');
-
-        this.physics.add.collider(this.player, this.ennemi, this.playerDie, null, this);
 
     }
 
@@ -232,7 +231,9 @@ export class lvl1 extends Phaser.Scene {
         //this.detectionZone.y = this.player.y;
 
 
+
     }
+
 
     recruterRenard() {
         // Vérifie si un renard existe déjà
@@ -342,19 +343,13 @@ export class lvl1 extends Phaser.Scene {
     this.hasKey = false;
     }
 
-    playerDie() {
-        // Fonction appelée lorsque le joueur touche l'ennemi
-        // Réinitialise la position du joueur
-        this.player.setPosition(344, 3816);
-        // Supprime le renard s'il le suivait
-        if (this.renard) {
-            this.renard.destroy();
-            this.renard = null;
-        }
+    recommencerNiveau() {
+        // Réinitialise les états du jeu ou effectue d'autres actions nécessaires
+        // ...
+        
+        // Recommence le niveau "lvl1"
+        this.scene.start("lvl1");
     }
-
-
-
 
 }
 
