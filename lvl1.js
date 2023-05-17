@@ -69,7 +69,7 @@ export class lvl1 extends Phaser.Scene {
         this.ennemi.body.setImmovable(true);
 
         this.physics.add.collider(this.player, this.plateformes);
-        this.physics.add.collider(this.renard, this.plateformes);
+        //this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
@@ -102,8 +102,12 @@ export class lvl1 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 12800, 12800);
         this.cameras.main.startFollow(this.player);
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+        //this.cursors = this.input.keyboard.createCursorKeys();
 
+        this.cursorsUp = this.input.keyboard.addKey('Z');
+        this.cursorsLeft = this.input.keyboard.addKey('Q')
+        this.cursorsRight = this.input.keyboard.addKey('D')
+        this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
 
     }
@@ -113,16 +117,16 @@ export class lvl1 extends Phaser.Scene {
         const isPlayerTouchingDoor = this.physics.overlap(this.player, this.door);
         
         // ajout des moyens de déplacement du personnage
-        if (this.cursors.left.isDown) {
+        if (this.cursorsLeft.isDown) {
             this.player.setVelocityX(-260);
-        } else if (this.cursors.right.isDown) {
+        } else if (this.cursorsRight.isDown) {
             this.player.setVelocityX(260);
         } else {
             this.player.setVelocityX(0);
         }
     
         // Saut
-        if (this.cursors.up.isDown && this.player.body.blocked.down){
+        if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
@@ -356,12 +360,16 @@ export class lvl1 extends Phaser.Scene {
     }
 
     recommencerNiveau() {
-        // Réinitialise les états du jeu ou effectue d'autres actions nécessaires
-        // ...
+        // Si le renard suit encore le joueur, le faire disparaitre
+        if (this.renardIsFollowing) {
+          this.renardIsFollowing = false;
+          this.renard.disableBody(true, true);
+        }
         
-        // Recommence le niveau "lvl1"
+        // Recommencer le niveau "lvl1"
         this.scene.start("lvl1");
-    }
+      }
+      
 
     gainSaut() {
           // Vérifier si le double saut est activé
@@ -371,7 +379,7 @@ export class lvl1 extends Phaser.Scene {
               console.log("Saut effectué.");
       
               // Appliquer une vélocité vers le haut pour le double saut
-              this.player.setVelocityY(-675);
+              this.player.setVelocityY(-725);
               this.magatama.setVisible(false);
       
               this.doubleSautAutorise = false; // Désactiver le double saut
