@@ -16,7 +16,7 @@ export class lvl1 extends Phaser.Scene {
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        {frameWidth: 128, frameHeight : 128});
+        {frameWidth: 128, frameHeight : 256});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
@@ -30,6 +30,7 @@ export class lvl1 extends Phaser.Scene {
         this.porte;
         this.sanctuaire;
         this.ennemi;
+        this.renard = null;
 
         this.hasKey = false;
 
@@ -45,7 +46,7 @@ export class lvl1 extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(344, 3816, 'nikko');
         this.player.setCollideWorldBounds(true);
-        this.player.body.setGravityY(1000);
+        this.player.body.setGravityY(1600);
 
         this.renard = this.physics.add.sprite(644, 3816, 'renard');
         this.renard.setCollideWorldBounds(true);
@@ -61,17 +62,22 @@ export class lvl1 extends Phaser.Scene {
         this.ennemi.setCollideWorldBounds(true);
         this.ennemi.body.setImmovable(true);
 
-        this.physics.add.collider(this.player, this.ennemi);
         this.physics.add.collider(this.player, this.plateformes);
         this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes);
         this.physics.add.collider(this.renard, this.porte);
+        this.physics.add.collider(this.player, this.ennemi);
 
 
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
         this.player.setCollideWorldBounds(true);
+
+        this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
+        this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
+        this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
+        this.detectionZone.setGravityY (0);
 
         // création de la caméra
         // taille de la caméra
@@ -94,6 +100,7 @@ export class lvl1 extends Phaser.Scene {
 
         this.interactButton = this.input.keyboard.addKey('E');
 
+        this.physics.add.collider(this.player, this.ennemi, this.playerDie, null, this);
 
     }
 
@@ -113,7 +120,7 @@ export class lvl1 extends Phaser.Scene {
         // Saut
         if (this.cursors.up.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-650);
+            this.player.setVelocityY(-675);
         }
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
@@ -181,10 +188,49 @@ export class lvl1 extends Phaser.Scene {
                 // Détruit le renard actuel
                 this.renard.destroy();
 
+              // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
+            function getRandomPositionAroundSanctuaire() {
+                const offsetX = Phaser.Math.Between(-100, 100); // Offset horizontal aléatoire
+                const offsetY = Phaser.Math.Between(-100, 100); // Offset vertical aléatoire
+                const renardX = this.sanctuaire.x + offsetX;
+                const renardY = this.sanctuaire.y + offsetY;
+                return { x: renardX, y: renardY };
+            }
+            
+            // Recrée le renard à une position aléatoire autour du sanctuaire
+            const initialPosition = getRandomPositionAroundSanctuaire.call(this);
+            this.renard = this.physics.add.sprite(initialPosition.x, initialPosition.y, 'renard');
+            
+            // Active les mouvements du renard pour qu'il flotte autour du sanctuaire
+            this.renardIsFollowing = true;
+            this.physics.add.collider(this.renard, this.sanctuaire, this.handleRenardSanctuaireCollision, null, this);
+            
+            // Crée un tween pour le mouvement fluide et aléatoire du renard
+            this.renardTween = this.tweens.add({
+                targets: this.renard,
+                x: () => {
+                const position = getRandomPositionAroundSanctuaire.call(this);
+                return position.x;
+                },
+                y: () => {
+                const position = getRandomPositionAroundSanctuaire.call(this);
+                return position.y;
+                },
+                ease: 'Sine.easeInOut',
+                duration: 2000, // Durée de l'animation en millisecondes
+                yoyo: true,
+                repeat: -1 // Répétition infinie
+            });
+
                 // Réinitialise la variable renardIsFollowing
                 this.renardIsFollowing = false;
             }
         });
+
+        // Mettre à jour la position de la zone de détection devant le joueur
+        //this.detectionZone.x = this.player.x + 64;
+        //this.detectionZone.y = this.player.y;
+
 
     }
 
@@ -206,7 +252,6 @@ export class lvl1 extends Phaser.Scene {
         this.renard.setBounce(0.2);
     
         // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
-         // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
         this.update = () => {
             const targetX = this.player.x - 150;
             const targetY = this.player.y - 128;
@@ -296,6 +341,18 @@ export class lvl1 extends Phaser.Scene {
     this.porte.destroy();
     this.hasKey = false;
     }
+
+    playerDie() {
+        // Fonction appelée lorsque le joueur touche l'ennemi
+        // Réinitialise la position du joueur
+        this.player.setPosition(344, 3816);
+        // Supprime le renard s'il le suivait
+        if (this.renard) {
+            this.renard.destroy();
+            this.renard = null;
+        }
+    }
+
 
 
 

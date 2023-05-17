@@ -12,7 +12,6 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y : 400 },
         debug: true
     }},
     pixelArt:true,
