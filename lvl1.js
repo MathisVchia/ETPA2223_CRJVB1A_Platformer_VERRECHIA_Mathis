@@ -15,10 +15,12 @@ export class lvl1 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
-        this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        {frameWidth: 128, frameHeight : 256});
+        //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
+        //{frameWidth: 128, frameHeight : 128});
+
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('magatama', 'assets/objects/magatama.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
         
     }
@@ -30,16 +32,19 @@ export class lvl1 extends Phaser.Scene {
         this.porte;
         this.sanctuaire;
         this.ennemi;
+        this.magatama;
         this.renard = null;
         this.gameOver = false;
-
         this.hasKey = false;
-
+        this.dbSaut = false;
+        
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
         this.plateformes = this.map1.createLayer('Plateformes', this.tileset);
 
         this.plateformes.setCollisionByProperty({estSolid: true});
+
+        this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
         this.sanctuaire = this.physics.add.sprite(3000, 3816, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
@@ -152,7 +157,7 @@ export class lvl1 extends Phaser.Scene {
     
         // Ajoute un événement de clic pour donner l'ordre au renard de se rendre à un endroit précis avec la souris
         this.input.on('pointerdown', this.donnerOrdreRenard, this);
-        console.log(this.renard.y);
+        //console.log(this.renard.y);
 
          // Ajout de la collision entre le renard et la clef
          this.physics.add.overlap(this.renard, this.clef, () => {
@@ -223,8 +228,15 @@ export class lvl1 extends Phaser.Scene {
 
                 // Réinitialise la variable renardIsFollowing
                 this.renardIsFollowing = false;
+                this.doubleSautAutorise = true;
+                
             }
         });
+
+        console.log (this.doubleSautAutorise)
+        if (this.doubleSautAutorise === true){
+            this.gainSaut()
+        };
 
         // Mettre à jour la position de la zone de détection devant le joueur
         //this.detectionZone.x = this.player.x + 64;
@@ -351,5 +363,22 @@ export class lvl1 extends Phaser.Scene {
         this.scene.start("lvl1");
     }
 
+    gainSaut() {
+          // Vérifier si le double saut est activé
+          if (this.doubleSautAutorise && !this.player.body.blocked.down) {
+            // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
+            if (this.cursors.space.isDown) {
+              console.log("Saut effectué.");
+      
+              // Appliquer une vélocité vers le haut pour le double saut
+              this.player.setVelocityY(-675);
+              this.magatama.setVisible(false);
+      
+              this.doubleSautAutorise = false; // Désactiver le double saut
+            }
+          } else {
+            console.log("Double saut déjà utilisé ou le joueur est au sol.");
+          }
+    }
 }
 
