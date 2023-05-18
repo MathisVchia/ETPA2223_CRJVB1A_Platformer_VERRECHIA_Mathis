@@ -37,6 +37,7 @@ export class lvl1 extends Phaser.Scene {
         this.gameOver = false;
         this.hasKey = false;
         this.dbSaut = false;
+        this.canClimb = false;
         
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
@@ -80,10 +81,10 @@ export class lvl1 extends Phaser.Scene {
         // PLAYER - Collision entre le joueur et les limites du niveau
         this.player.setCollideWorldBounds(true);
 
-        this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
-        this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
-        this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
-        this.detectionZone.setGravityY (0);
+        //this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
+        //this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
+        //this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
+        //this.detectionZone.setGravityY (0);
 
         // création de la caméra
         // taille de la caméra
@@ -98,8 +99,8 @@ export class lvl1 extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
-        this.physics.world.setBounds(0, 0, 3840, 3840);
-        this.cameras.main.setBounds(0, 0, 12800, 12800);
+        this.physics.world.setBounds(0, 0, 22000, 10000);
+        this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
         //this.cursors = this.input.keyboard.createCursorKeys();
@@ -245,6 +246,30 @@ export class lvl1 extends Phaser.Scene {
         // Mettre à jour la position de la zone de détection devant le joueur
         //this.detectionZone.x = this.player.x + 64;
         //this.detectionZone.y = this.player.y;
+
+        // Collision avec le mur à gauche
+        if (this.player.body.blocked.left || this.player.body.touching.left) {
+            this.canClimb = true;
+        } else if (this.player.body.blocked.right || this.player.body.touching.right) {
+            // Collision avec le mur à droite
+            this.canClimb = true;
+        } else {
+            // Aucune collision
+            this.canClimb = false;
+        }
+
+        if (this.canClimb) {
+            if (this.cursorsUp.isDown && !this.dbSaut) {
+                // Définir la vitesse de montée
+                this.player.setVelocityY(-700);
+        
+                // Désactiver la possibilité de sauter à nouveau pendant 1 seconde
+                this.dbSaut = true;
+                this.time.delayedCall(1000, () => {
+                    this.dbSaut = false;
+                });
+            }
+        }
 
 
 

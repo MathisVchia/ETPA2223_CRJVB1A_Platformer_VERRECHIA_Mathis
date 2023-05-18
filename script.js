@@ -4,6 +4,8 @@
 
 import { lvl1 as lvl1} from "/lvl1.js"
 
+//import { Niveau1 as Niveau1} from "/Niveau1.js"
+
 
 
 var config = {
@@ -12,7 +14,8 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-        debug: true
+            debug: true,
+            tileBias: 128
     }},
     pixelArt:true,
     input:{gamepad:true},
