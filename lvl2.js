@@ -1,7 +1,7 @@
-export class lvl1 extends Phaser.Scene {
+export class lvl2 extends Phaser.Scene {
 
     constructor() {
-        super("lvl1");
+        super("lvl2");
     }
 
     preload() {
@@ -21,7 +21,7 @@ export class lvl1 extends Phaser.Scene {
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('magatama', 'assets/objects/magatama.png');
-        this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
+        this.load.tilemapTiledJSON('map2', 'assets/maps/V1Lvl2.json');
         
     }
 
@@ -38,30 +38,31 @@ export class lvl1 extends Phaser.Scene {
         this.hasKey = false;
         this.dbSaut = false;
         this.canClimb = false;
+        this.actionExecuted = false;
         
-        this.map1 = this.add.tilemap('map1');
-        this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
-        this.plateformes = this.map1.createLayer('Plateformes', this.tileset);
+        this.map2 = this.add.tilemap('map2');
+        this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
+        this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
 
-        this.plateformes.setCollisionByProperty({estSolid: true});
+        this.plateformes2.setCollisionByProperty({estSolid: true});
 
         this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
-        this.sanctuaire = this.physics.add.sprite(3000, 3816, 'sanctuaire');
+        this.sanctuaire = this.physics.add.sprite(14460, 3708, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
 
-        this.player = this.physics.add.sprite(344, 3816, 'nikko');
+        this.player = this.physics.add.sprite(112, 2544, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
 
-        this.renard = this.physics.add.sprite(644, 3816, 'renard');
+        this.renard = this.physics.add.sprite(4800, 3530, 'renard');
         this.renard.setCollideWorldBounds(true);
 
-        this.clef = this.physics.add.sprite(100, 3816, 'clef');
+        this.clef = this.physics.add.sprite(7678, 4292, 'clef');
         this.clef.setCollideWorldBounds(true);
 
-        this.porte = this.physics.add.sprite(1000, 3816, 'porte');
+        this.porte = this.physics.add.sprite(11848, 2812, 'porte');
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
 
@@ -69,9 +70,9 @@ export class lvl1 extends Phaser.Scene {
         this.ennemi.setCollideWorldBounds(true);
         this.ennemi.body.setImmovable(true);
 
-        this.physics.add.collider(this.player, this.plateformes);
+        this.physics.add.collider(this.player, this.plateformes2);
         //this.physics.add.collider(this.renard, this.plateformes);
-        this.physics.add.collider(this.clef, this.plateformes);
+        this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
@@ -271,8 +272,15 @@ export class lvl1 extends Phaser.Scene {
             }
         }
 
+            // Vérifie si l'action n'a pas encore été réalisée
+            if (!this.actionExecuted && this.player.x >= 2742) {
+                this.cinematic1()
 
+            };
 
+        if ( this.player.x > 16930){
+            this.changedLevelVillage();
+        }
     }
 
 
@@ -412,6 +420,33 @@ export class lvl1 extends Phaser.Scene {
           } else {
             console.log("Double saut déjà utilisé ou le joueur est au sol.");
           }
+    }
+
+    cinematic1() {
+        // Bloque les mouvements du joueur
+        this.player.setImmovable(true);
+    
+        // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
+        this.cameras.main.pan(4800, 3530, 3000, 'Sine.easeInOut', false, () => {
+            // Bloque les mouvements du joueur
+            this.player.setImmovable(true);
+                
+            // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
+            this.time.delayedCall(5000, () => {
+                // Fait revenir la caméra sur le joueur
+                this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
+                    // Débloque les mouvements du joueur
+                    this.player.setImmovable(false);
+    
+                    // Met à jour la variable pour indiquer que l'action a été réalisée
+                    this.actionExecuted = true;
+                });
+            });
+        });
+    }
+
+    changedLevelVillage(){
+        this.scene.start("Village");
     }
 }
 

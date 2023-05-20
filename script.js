@@ -2,10 +2,11 @@
 
 //import {menu as menu} from "./script_menu.js"
 
-import { lvl1 as lvl1} from "/lvl1.js"
+//import { lvl1 as lvl1} from "/lvl1.js"
 
-//import { Niveau1 as Niveau1} from "/Niveau1.js"
+import { lvl2 as lvl2} from "/lvl2.js"
 
+import {Village as Village} from "/Village.js"
 
 
 var config = {
@@ -19,7 +20,7 @@ var config = {
     }},
     pixelArt:true,
     input:{gamepad:true},
-    scene: [lvl1],     
+    scene: [/*lvl1, */lvl2, Village],     
     };
     
 new Phaser.Game(config);
