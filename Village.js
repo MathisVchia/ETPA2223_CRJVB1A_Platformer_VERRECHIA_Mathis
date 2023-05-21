@@ -31,7 +31,7 @@ export class Village extends Phaser.Scene {
         this.hasKey = false;
         this.dbSaut = false;
         this.canClimb = false;
-        this.actionExecuted = false;
+
         
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
@@ -41,7 +41,7 @@ export class Village extends Phaser.Scene {
 
         this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
-        this.player = this.physics.add.sprite(112, 2544, 'nikko');
+        this.player = this.physics.add.sprite(640, 3832, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
 
@@ -69,7 +69,6 @@ export class Village extends Phaser.Scene {
         this.cameras.main.setDeadzone(100,100);
         //this.cameras.main.setBounds(0,0,4160,3456);
 
-        this.physics.add.overlap(this.player, this.renard, this.recrute.bind(this));
         this.interactButton = this.input.keyboard.addKey('E');
 
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -85,6 +84,7 @@ export class Village extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
+        this.interactButton.on('down', this.openTextBlock, this);
 
     }
 
@@ -107,116 +107,6 @@ export class Village extends Phaser.Scene {
             this.player.setVelocityY(-675);
         }
     
-        // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
-        const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
-        if (distanceToRenard < 150 && this.interactButton.isDown && !this.renardIsFollowing) {
-            this.recruterRenard();
-            this.renardIsFollowing = true;
-        }
-    
-        // Si le renard suit déjà le joueur, met à jour sa position pour qu'il reste derrière le joueur
-        if (this.renardIsFollowing) {
-            const targetX = this.player.x - 150;
-            const targetY = this.player.y - 128;
-    
-            const deltaX = targetX - this.renard.x;
-            const deltaY = targetY - this.renard.y;
-    
-            const speed = 200;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
-            if (distance > 1) {
-                const moveX = (deltaX / distance) * speed;
-                const moveY = (deltaY / distance) * speed;
-    
-                this.renard.setVelocity(moveX, moveY);
-            } else {
-                this.renard.setVelocity(0, 0);
-            }
-        }
-    
-        // Ajoute un événement de clic pour donner l'ordre au renard de se rendre à un endroit précis avec la souris
-        this.input.on('pointerdown', this.donnerOrdreRenard, this);
-        //console.log(this.renard.y);
-
-         // Ajout de la collision entre le renard et la clef
-         this.physics.add.overlap(this.renard, this.clef, () => {
-            console.log("ddjs")
-            this.collectKey();
-        });
-
-        // Ajout collision joueur porte
-        this.physics.add.collider(this.player, this.porte, () =>{
-            if (this.hasKey === true){
-                console.log ("TU TOUCHE")
-                this.openDoor();
-            };
-            if (this.hasKey === false) {
-                const delay = 3000; // Temps d'affichage en millisecondes
-            
-                const text = this.add.text(800, 3916, "Vous avez besoin d'une clé pour ouvrir la porte.", {
-                    font: "24px Arial",
-                    fill: "#ffffff"
-                });
-                text.setOrigin(0.5);
-            
-                this.time.delayedCall(delay, () => {
-                    text.destroy(); // Supprime le texte après le délai spécifié
-                });
-            }
-        });
-
-            // Ajout collision joueur sanctuaire
-        this.physics.add.overlap(this.player, this.sanctuaire, () => {
-            if (this.renardIsFollowing) {
-                // Détruit le renard actuel
-                this.renard.destroy();
-
-              // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
-            function getRandomPositionAroundSanctuaire() {
-                const offsetX = Phaser.Math.Between(-100, 100); // Offset horizontal aléatoire
-                const offsetY = Phaser.Math.Between(-100, 100); // Offset vertical aléatoire
-                const renardX = this.sanctuaire.x + offsetX;
-                const renardY = this.sanctuaire.y + offsetY;
-                return { x: renardX, y: renardY };
-            }
-            
-            // Recrée le renard à une position aléatoire autour du sanctuaire
-            const initialPosition = getRandomPositionAroundSanctuaire.call(this);
-            this.renard = this.physics.add.sprite(initialPosition.x, initialPosition.y, 'renard');
-            
-            // Active les mouvements du renard pour qu'il flotte autour du sanctuaire
-            this.renardIsFollowing = true;
-            this.physics.add.collider(this.renard, this.sanctuaire, this.handleRenardSanctuaireCollision, null, this);
-            
-            // Crée un tween pour le mouvement fluide et aléatoire du renard
-            this.renardTween = this.tweens.add({
-                targets: this.renard,
-                x: () => {
-                const position = getRandomPositionAroundSanctuaire.call(this);
-                return position.x;
-                },
-                y: () => {
-                const position = getRandomPositionAroundSanctuaire.call(this);
-                return position.y;
-                },
-                ease: 'Sine.easeInOut',
-                duration: 2000, // Durée de l'animation en millisecondes
-                yoyo: true,
-                repeat: -1 // Répétition infinie
-            });
-
-                // Réinitialise la variable renardIsFollowing
-                this.renardIsFollowing = false;
-                this.doubleSautAutorise = true;
-                
-            }
-        });
-
-        console.log (this.doubleSautAutorise)
-        if (this.doubleSautAutorise === true){
-            this.gainSaut()
-        };
 
         // Mettre à jour la position de la zone de détection devant le joueur
         //this.detectionZone.x = this.player.x + 64;
@@ -246,121 +136,21 @@ export class Village extends Phaser.Scene {
             }
         }
 
-            // Vérifie si l'action n'a pas encore été réalisée
+            /*// Vérifie si l'action n'a pas encore été réalisée
             if (!this.actionExecuted && this.player.x >= 2742) {
                 this.cinematic1()
 
             };
+            */
+        
+            if (this.player.x < 256) {
+                console.log ("TU VAS PARLER OUI?")
+                this.openTextBlock();
+                
+              }
     }
 
 
-    recruterRenard() {
-        // Vérifie si un renard existe déjà
-        if (this.renard) {
-            // Détruit le renard actuel
-            this.renard.destroy();
-        }
-    
-        // Crée un nouveau sprite de renard derrière le joueur
-        this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
-        //this.physics.add.collider(this.renard, this.plateformes);
-        this.renard.body.setAllowGravity(false);
-
-  
-        // Ajoute un comportement de suivi du joueur
-        this.renard.body.setCollideWorldBounds(true);
-        this.renard.setBounce(0.2);
-    
-        // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
-        this.update = () => {
-            const targetX = this.player.x - 150;
-            const targetY = this.player.y - 128;
-
-            const deltaX = targetX - this.renard.x;
-            const deltaY = targetY - this.renard.y;
-
-            const speed = 200;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-            if (distance > 1) {
-                const moveX = (deltaX / distance) * speed;
-                const moveY = (deltaY / distance) * speed;
-
-                this.renard.setVelocity(moveX, moveY);
-            } else {
-                if (this.player.velocity == 0){
-                    this.renard.setVelocity(0, 0);
-                    console.log("OK")
-                };
-            }
-        }
-    }
-
-    donnerOrdreRenard(pointer) {
-        if (this.renardIsFollowing) {
-            // Arrête le renard et désactive le suivi du joueur
-            this.renardIsFollowing = false;
-            this.renard.setVelocity(0, 0);
-            this.physics.moveTo(this.renard,pointer.worldX,pointer.worldY,200);
-            this.zoneA = pointer.worldX;
-            this.zoneB = pointer.worldY;
-
-             // Vérifie si le renard a atteint les coordonnées du pointer
-        this.time.addEvent({
-            delay: 100,
-            callback: () => {
-                const distanceToPointer = Phaser.Math.Distance.Between(this.renard.x, this.renard.y, this.zoneA, this.zoneB);
-                if (distanceToPointer < 10) {
-                    // Arrête le renard
-                    this.renard.setVelocity(0, 0);
-                    this.renardIsFollowing = true;
-                    this.physics.moveTo(this.renard, this.player.x - 150, this.player.y - 128, 200);
-                }
-            },
-            loop: true
-        });
-
-        if (this.interactButton.isDown) {
-            this.recrute();
-            console.log("recrute")
-        }
-
-        if (this.renard.followingPlayer) {
-            this.renard.body.velocity.x = this.player.body.velocity.x;
-            this.renard.body.velocity.y = this.player.body.velocity.y;
-          }
-
-    }
-}
-
-
-    recrute() {
-        const distance = Phaser.Math.Between(this.player.x,this.renard.x);
-        console.log(distance)
-
-        if (distance < 44000) {
-            this.renard.followingPlayer = true;
-        }
-    }
-
-    collectKey() {
-        // Détecter la collision entre le renard et la clef
-        this.physics.add.overlap(this.renard, this.clef, () => {
-          // Faire disparaître la clef
-          this.clef.destroy();
-      
-          // Stocker la clef dans l'inventaire
-          this.hasKey = true;
-          console.log("TU AS LA CLEF");
-        });
-      }
-
-    openDoor() {
-    //Détecter si le joueur possède la clef
-    console.log("SESAME OUVRE TOI")
-    this.porte.destroy();
-    this.hasKey = false;
-    }
 
     recommencerNiveau() {
         // Si le renard suit encore le joueur, le faire disparaitre
@@ -391,7 +181,7 @@ export class Village extends Phaser.Scene {
             console.log("Double saut déjà utilisé ou le joueur est au sol.");
           }
     }
-
+/*
     cinematic1() {
         // Bloque les mouvements du joueur
         this.player.setImmovable(true);
@@ -414,5 +204,47 @@ export class Village extends Phaser.Scene {
             });
         });
     }
-}
+    */
 
+    openTextBlock() {
+        // Bloquer les mouvements du joueur
+        this.player.setVelocity(0);
+        this.player.setImmovable(true);
+        
+        // Créer le texte interactif
+        const textBlock = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Cliquez sur les phrases", {
+          fontSize: '32px',
+          fill: '#fff',
+          backgroundColor: '#000',
+          padding: {
+            x: 20,
+            y: 10
+          }
+        }).setOrigin(0.5).setInteractive();
+        
+        // Ajouter des événements de clic aux phrases du texte
+        textBlock.on('pointerdown', () => {
+          // Action à effectuer lorsque la première phrase est cliquée
+          console.log("Phrase 1 cliquée.");
+        });
+        
+        textBlock.on('pointerup', () => {
+          // Action à effectuer lorsque la deuxième phrase est cliquée
+          console.log("Phrase 2 cliquée.");
+        });
+        
+        // Fonction pour débloquer les mouvements du joueur et supprimer le texte interactif
+        const unblockPlayer = () => {
+          // Débloquer les mouvements du joueur
+          this.player.setImmovable(false);
+          
+          // Supprimer le texte interactif
+          textBlock.destroy();
+        };
+        
+        // Définir un délai de 5 secondes avant de débloquer les mouvements du joueur
+        this.time.delayedCall(5000, unblockPlayer, [], this);
+      }
+
+
+}
