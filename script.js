@@ -19,7 +19,7 @@ var config = {
     }},
     pixelArt:true,
     input:{gamepad:true},
-    scene: [Menu, /*lvl1, */lvl2, Village],     
+    scene: [Menu, lvl1, lvl2, Village],     
     };
     
 new Phaser.Game(config);

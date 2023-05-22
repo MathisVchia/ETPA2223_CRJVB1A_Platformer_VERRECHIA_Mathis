@@ -148,7 +148,7 @@ export class lvl2 extends Phaser.Scene {
             const deltaX = targetX - this.renard.x;
             const deltaY = targetY - this.renard.y;
     
-            const speed = 200;
+            const speed = 240;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     
             if (distance > 1) {
