@@ -143,7 +143,8 @@ export class Village extends Phaser.Scene {
             };
             */
         
-            if (this.player.x < 256) {
+            if (this.player.x < 256 && !this.activeText) {
+                this.activeText = true;
                 console.log ("TU VAS PARLER OUI?")
                 this.openTextBlock();
                 
@@ -208,42 +209,26 @@ export class Village extends Phaser.Scene {
 
     openTextBlock() {
         // Bloquer les mouvements du joueur
-        this.player.setVelocity(0);
-        this.player.setImmovable(true);
+         this.player.setVelocity(0);
         
         // Créer le texte interactif
-        const textBlock = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Cliquez sur les phrases", {
-          fontSize: '32px',
-          fill: '#fff',
-          backgroundColor: '#000',
-          padding: {
-            x: 20,
-            y: 10
-          }
-        }).setOrigin(0.5).setInteractive();
+         console.log ("BLABLABLA")
+         const bouton = this.add.text(this.player.x +1, this.player.y + 1, "Retape toi tout depuis le debut", {
+           fontSize: "32px",
+           color: "#ffffff",
+       });
+       bouton.setOrigin(0.5);
+       bouton.setInteractive();
+
+       // Lorsqu'on appuie sur le bouton, on lance le jeu
+       console.log("Est ce que tu m'entends hého")
+       bouton.on("pointerdown", () => {
+           this.scene.start("lvl2");
+       });
+
+       console.log (bouton);
         
-        // Ajouter des événements de clic aux phrases du texte
-        textBlock.on('pointerdown', () => {
-          // Action à effectuer lorsque la première phrase est cliquée
-          console.log("Phrase 1 cliquée.");
-        });
-        
-        textBlock.on('pointerup', () => {
-          // Action à effectuer lorsque la deuxième phrase est cliquée
-          console.log("Phrase 2 cliquée.");
-        });
-        
-        // Fonction pour débloquer les mouvements du joueur et supprimer le texte interactif
-        const unblockPlayer = () => {
-          // Débloquer les mouvements du joueur
-          this.player.setImmovable(false);
-          
-          // Supprimer le texte interactif
-          textBlock.destroy();
-        };
-        
-        // Définir un délai de 5 secondes avant de débloquer les mouvements du joueur
-        this.time.delayedCall(5000, unblockPlayer, [], this);
+  
       }
 
 

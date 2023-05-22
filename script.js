@@ -1,8 +1,8 @@
 // importation des différents calques
 
-//import {menu as menu} from "./script_menu.js"
+import {Menu as Menu} from "/Menu.js"
 
-//import { lvl1 as lvl1} from "/lvl1.js"
+import { lvl1 as lvl1} from "/lvl1.js"
 
 import { lvl2 as lvl2} from "/lvl2.js"
 
@@ -19,7 +19,7 @@ var config = {
     }},
     pixelArt:true,
     input:{gamepad:true},
-    scene: [/*lvl1, lvl2, */Village],     
+    scene: [Menu, /*lvl1, */lvl2, Village],     
     };
     
 new Phaser.Game(config);

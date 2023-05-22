@@ -423,23 +423,22 @@ export class lvl2 extends Phaser.Scene {
     }
 
     cinematic1() {
+
         // Bloque les mouvements du joueur
         this.player.setImmovable(true);
     
         // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
         this.cameras.main.pan(4800, 3530, 3000, 'Sine.easeInOut', false, () => {
-            // Bloque les mouvements du joueur
-            this.player.setImmovable(true);
-                
             // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
             this.time.delayedCall(5000, () => {
                 // Fait revenir la caméra sur le joueur
                 this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
                     // Débloque les mouvements du joueur
                     this.player.setImmovable(false);
-    
+
                     // Met à jour la variable pour indiquer que l'action a été réalisée
                     this.actionExecuted = true;
+
                 });
             });
         });
