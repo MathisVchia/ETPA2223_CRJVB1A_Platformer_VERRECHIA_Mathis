@@ -65,15 +65,23 @@ export class lvl2 extends Phaser.Scene {
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
 
-        this.ennemi = this.physics.add.sprite(2500, 3816, 'ennemi');
-        this.ennemi.setCollideWorldBounds(true);
-        this.ennemi.body.setImmovable(true);
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemis = this.physics.add.group();
+
+        this.ennemi = this.map2.getObjectLayer('ennemi');
+        this.ennemi.objects.forEach(ennemi => {
+            this.ennemi_create = this.physics.add.sprite(ennemi.x + 64, ennemi.y + 64, 'ennemi');
+            this.ennemis.add(this.ennemi_create);
+        });
+
 
         this.physics.add.collider(this.player, this.plateformes2);
         //this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
+        this.physics.add.collider(this.player, this.ennemis, this.recommencerNiveau, null, this);
 
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
             if (this.renardIsFollowing) {
@@ -406,7 +414,7 @@ export class lvl2 extends Phaser.Scene {
         }
         
         // Recommencer le niveau "lvl1"
-        this.scene.start("lvl1");
+        this.scene.start("lvl2");
       }
       
 
