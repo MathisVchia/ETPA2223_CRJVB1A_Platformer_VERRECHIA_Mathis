@@ -286,6 +286,7 @@ export class Village extends Phaser.Scene {
                   });
                 }
               });
+              this.pnj.setVelocityX(0);
             }
           });
       
@@ -343,17 +344,17 @@ export class Village extends Phaser.Scene {
 
        // Créer le texte interactif
          console.log ("BLABLABLA")
-         const bouton2 = this.add.text(bouton.x - 165, bouton.y +100, "Vers la Forêt", {
+         const bouton2 = this.add.text(bouton.x, bouton.y +100, "Vers la Forêt", {
            fontSize: "32px",
            color: "#ffffff",
        });
-       bouton.setOrigin(0.5);
-       bouton.setInteractive();
+       bouton2.setOrigin(0.5);
+       bouton2.setInteractive();
 
        // Lorsqu'on appuie sur le bouton, on lance le jeu
-       console.log("Est ce que tu m'entends hého")
-       bouton.on("pointerdown", () => {
-           this.scene.start("lvl2");
+       console.log("Est ce que tu me sens hého")
+       bouton2.on("pointerdown", () => {
+           this.scene.start("lvl3");
        });
 
        console.log (bouton);

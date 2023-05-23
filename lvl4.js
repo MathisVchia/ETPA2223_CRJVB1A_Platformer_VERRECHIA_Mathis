@@ -1,7 +1,7 @@
-export class lvl2 extends Phaser.Scene {
+export class lvl4 extends Phaser.Scene {
 
     constructor() {
-        super("lvl2");
+        super("lvl4");
     }
 
     preload() {
@@ -15,23 +15,24 @@ export class lvl2 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
-        //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        //{frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
+        {frameWidth: 128, frameHeight : 128});
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('magatama', 'assets/objects/magatama.png');
-        this.load.tilemapTiledJSON('map2', 'assets/maps/V1Lvl2.json');
+        this.load.tilemapTiledJSON('map5', 'assets/maps/V1Lvl4.json');
+        
         
     }
 
     create() {
+        console.log("lvl3");
         this.player;
         this.renard;
         this.clef;
         this.porte;
         this.sanctuaire;
-        this.ennemi;
         this.magatama;
         this.renard = null;
         this.gameOver = false;
@@ -40,34 +41,36 @@ export class lvl2 extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.magatama = null;
-        this.doubleJumpAvailable = false;
         
-        this.map2 = this.add.tilemap('map2');
-        this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
-        this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
-        this.ennemi = this.map2.createLayer ('ennemi', this.tileset);
-        this.sanctuaire = this.map2.createLayer('sanctuaire', this.tileset);
+        this.map5 = this.add.tilemap('map5');
+        this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
+        this.plateformes5 = this.map5.createLayer('Plateformes', this.tileset);
+        this.ennemi = this.map5.createLayer('ennemi', this.tileset);
 
-        this.plateformes2.setCollisionByProperty({estSolid: true});
+        this.plateformes5.setCollisionByProperty({estSolid: true});
 
-        this.player = this.physics.add.sprite(112, 2544, 'nikko');
+        this.sanctuaire = this.physics.add.sprite(14460, 3708, 'sanctuaire');
+        this.sanctuaire.setCollideWorldBounds(true);
+        this.sanctuaire.body.setImmovable(true);
+        
+        this.player = this.physics.add.sprite(15616, 2288, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
-
+        
         this.renard = this.physics.add.sprite(4800, 3530, 'renard');
         this.renard.setCollideWorldBounds(true);
 
         this.clef = this.physics.add.sprite(7678, 4292, 'clef');
         this.clef.setCollideWorldBounds(true);
 
-        //this.porte = this.physics.add.sprite(11848, 2812, 'porte');
-        //this.porte.setCollideWorldBounds(true);
-        //this.porte.body.setImmovable(true);
+        this.porte = this.physics.add.sprite(11848, 2812, 'porte');
+        this.porte.setCollideWorldBounds(true);
+        this.porte.body.setImmovable(true);
 
+        
 
-        this.physics.add.collider(this.player, this.plateformes2);
-        //this.physics.add.collider(this.renard, this.plateformes);
-        this.physics.add.collider(this.clef, this.plateformes2);
+        this.physics.add.collider(this.player, this.plateformes5);;
+        this.physics.add.collider(this.clef, this.plateformes5);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
@@ -199,7 +202,6 @@ export class lvl2 extends Phaser.Scene {
             if (this.renardIsFollowing) {
                 // Détruit le renard actuel
                 this.renard.destroy();
-                this.doubleJumpAvailable = true;
 
               // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
             function getRandomPositionAroundSanctuaire() {
@@ -276,10 +278,10 @@ export class lvl2 extends Phaser.Scene {
         }
 
             // Vérifie si l'action n'a pas encore été réalisée
-            if (!this.actionExecuted && this.player.x >= 2742) {
-                this.cinematic1()
+            //if (!this.actionExecuted && this.player.x >= 2742) {
+                //this.cinematic1()
 
-            };
+            //};
 
         if ( this.player.x > 16930){
             this.changedLevelVillage();
@@ -403,7 +405,7 @@ export class lvl2 extends Phaser.Scene {
         }
         
         // Recommencer le niveau "lvl1"
-        this.scene.start("lvl2");
+        this.scene.start("lvl3");
       }
       
 
@@ -426,30 +428,8 @@ export class lvl2 extends Phaser.Scene {
     }
 }
 
-    cinematic1() {
-
-        // Bloque les mouvements du joueur
-        this.player.setImmovable(true);
-    
-        // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
-        this.cameras.main.pan(4800, 3530, 3000, 'Sine.easeInOut', false, () => {
-            // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
-            this.time.delayedCall(5000, () => {
-                // Fait revenir la caméra sur le joueur
-                this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
-                    // Débloque les mouvements du joueur
-                    this.player.setImmovable(false);
-
-                    // Met à jour la variable pour indiquer que l'action a été réalisée
-                    this.actionExecuted = true;
-
-                });
-            });
-        });
-    }
-
-    changedLevelVillage(){
-        this.scene.start("Village");
-    }
+    //changedLevelVillage(){
+        //this.scene.start("Village");
+    //}
 }
 
