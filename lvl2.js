@@ -41,12 +41,11 @@ export class lvl2 extends Phaser.Scene {
         this.actionExecuted = false;
         this.magatama = null;
         this.doubleJumpAvailable = false;
-        
+
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
         this.ennemi = this.map2.createLayer ('ennemi', this.tileset);
-        this.sanctuaire = this.map2.createLayer('sanctuaire', this.tileset);
 
         this.plateformes2.setCollisionByProperty({estSolid: true});
 
@@ -63,6 +62,15 @@ export class lvl2 extends Phaser.Scene {
         //this.porte = this.physics.add.sprite(11848, 2812, 'porte');
         //this.porte.setCollideWorldBounds(true);
         //this.porte.body.setImmovable(true);
+
+           // TILED - load calque objet utilisés dans Tiled (sanctuaires)
+        this.groupe_sanct = this.physics.add.group();
+
+        this.position_sanct = this.map2.getObjectLayer('sanctuaire');
+        this.position_sanct.objects.forEach(position_sanct => {
+            this.sanctuaire_create = this.physics.add.sprite(position_sanct.x + 64, position_sanct.y + 64, 'sanctuaire');
+            this.groupe_sanct.add(this.sanctuaire_create);
+        });
 
 
         this.physics.add.collider(this.player, this.plateformes2);
@@ -199,6 +207,7 @@ export class lvl2 extends Phaser.Scene {
             if (this.renardIsFollowing) {
                 // Détruit le renard actuel
                 this.renard.destroy();
+                console.log("SANCTUTU")
                 this.doubleJumpAvailable = true;
 
               // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
@@ -292,6 +301,7 @@ export class lvl2 extends Phaser.Scene {
         if (this.renard) {
             // Détruit le renard actuel
             this.renard.destroy();
+            console.log("CHELOU TOUT CA")
         }
     
         // Crée un nouveau sprite de renard derrière le joueur
