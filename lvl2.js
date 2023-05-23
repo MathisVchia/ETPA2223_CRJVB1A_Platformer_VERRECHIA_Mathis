@@ -39,14 +39,13 @@ export class lvl2 extends Phaser.Scene {
         this.dbSaut = false;
         this.canClimb = false;
         this.actionExecuted = false;
+        this.magatama = null;
         
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
 
         this.plateformes2.setCollisionByProperty({estSolid: true});
-
-        this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
         this.sanctuaire = this.physics.add.sprite(14460, 3708, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
@@ -75,6 +74,12 @@ export class lvl2 extends Phaser.Scene {
         this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
+
+        this.physics.add.overlap(this.player, this.sanctuaire, () => {
+            if (this.renardIsFollowing) {
+                this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
+            };
+        });
 
 
         // résolution de l'écran
@@ -111,6 +116,7 @@ export class lvl2 extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
+
 
     }
 
@@ -171,7 +177,7 @@ export class lvl2 extends Phaser.Scene {
             this.collectKey();
         });
 
-        // Ajout collision joueur porte
+        // Ajout collision entre joueur et la porte
         this.physics.add.collider(this.player, this.porte, () =>{
             if (this.hasKey === true){
                 console.log ("TU TOUCHE")
@@ -406,7 +412,7 @@ export class lvl2 extends Phaser.Scene {
 
     gainSaut() {
           // Vérifier si le double saut est activé
-          if (this.doubleSautAutorise && !this.player.body.blocked.down) {
+          if (this.doubleJumpAvailable && this.doubleSautAutorise && !this.player.body.blocked.down) {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
             if (this.cursors.space.isDown) {
               console.log("Saut effectué.");
@@ -414,13 +420,14 @@ export class lvl2 extends Phaser.Scene {
               // Appliquer une vélocité vers le haut pour le double saut
               this.player.setVelocityY(-725);
               this.magatama.setVisible(false);
-      
-              this.doubleSautAutorise = false; // Désactiver le double saut
-            }
+              this.doubleJumpAvailable = false;
+              this.doubleJumpCooldown = true;
+                
           } else {
             console.log("Double saut déjà utilisé ou le joueur est au sol.");
           }
     }
+}
 
     cinematic1() {
 
