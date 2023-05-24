@@ -45,7 +45,7 @@ export class lvl1 extends Phaser.Scene {
 
         this.plateformes.setCollisionByProperty({estSolid: true});
 
-        this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
+        //this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
         this.player = this.physics.add.sprite(128, 3074, 'nikko');
         this.player.setCollideWorldBounds(true);

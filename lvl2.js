@@ -59,18 +59,14 @@ export class lvl2 extends Phaser.Scene {
         this.clef = this.physics.add.sprite(7678, 4292, 'clef');
         this.clef.setCollideWorldBounds(true);
 
+        this.sanctuaire = this.physics.add.sprite(14460, 3719, 'sanctuaire');
+        this.sanctuaire.setCollideWorldBounds(true);
+        this.sanctuaire.body.setImmovable(true);
+
         //this.porte = this.physics.add.sprite(11848, 2812, 'porte');
         //this.porte.setCollideWorldBounds(true);
         //this.porte.body.setImmovable(true);
 
-           // TILED - load calque objet utilisés dans Tiled (sanctuaires)
-        this.groupe_sanct = this.physics.add.group();
-
-        this.position_sanct = this.map2.getObjectLayer('sanctuaire');
-        this.position_sanct.objects.forEach(position_sanct => {
-            this.sanctuaire_create = this.physics.add.sprite(position_sanct.x + 64, position_sanct.y + 64, 'sanctuaire');
-            this.groupe_sanct.add(this.sanctuaire_create);
-        });
 
 
         this.physics.add.collider(this.player, this.plateformes2);
@@ -80,6 +76,7 @@ export class lvl2 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
+            console.log("foiz")
             if (this.renardIsFollowing) {
                 this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
             };
@@ -130,9 +127,9 @@ export class lvl2 extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-260);
+            this.player.setVelocityX(-1260);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(260);
+            this.player.setVelocityX(1260);
         } else {
             this.player.setVelocityX(0);
         }
@@ -140,7 +137,7 @@ export class lvl2 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-675);
+            this.player.setVelocityY(-1675);
         }
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé

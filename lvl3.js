@@ -49,7 +49,7 @@ export class lvl3 extends Phaser.Scene {
 
         this.plateformes4.setCollisionByProperty({estSolid: true});
 
-        this.sanctuaire = this.physics.add.sprite(14460, 3708, 'sanctuaire');
+        this.sanctuaire = this.physics.add.sprite(3327, 4481, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
@@ -57,21 +57,11 @@ export class lvl3 extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
         
-        this.renard = this.physics.add.sprite(4800, 3530, 'renard');
+        this.renard = this.physics.add.sprite(11775, 4090, 'renard');
         this.renard.setCollideWorldBounds(true);
-
-        this.clef = this.physics.add.sprite(7678, 4292, 'clef');
-        this.clef.setCollideWorldBounds(true);
-
-        this.porte = this.physics.add.sprite(11848, 2812, 'porte');
-        this.porte.setCollideWorldBounds(true);
-        this.porte.body.setImmovable(true);
-
         
 
         this.physics.add.collider(this.player, this.plateformes4);;
-        this.physics.add.collider(this.clef, this.plateformes4);
-        this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
