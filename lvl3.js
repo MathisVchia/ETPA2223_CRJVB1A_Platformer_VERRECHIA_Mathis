@@ -4,6 +4,11 @@ export class lvl3 extends Phaser.Scene {
         super("lvl3");
     }
 
+    init(data) {
+        this.nombreRenardsLivrés = data.nombreRenardsLivrés;
+        console.log(this.nombreRenardsLivrés);
+      }
+
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
@@ -27,7 +32,6 @@ export class lvl3 extends Phaser.Scene {
     }
 
     create() {
-        console.log("lvl3");
         this.player;
         this.renard;
         this.clef;
@@ -64,11 +68,18 @@ export class lvl3 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plateformes4);;
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
-        this.physics.add.overlap(this.player, this.sanctuaire, () => {
-            if (this.renardIsFollowing) {
+        console.log(this.nombreRenardsLivrés);
+
+        //this.physics.add.overlap(this.player, this.sanctuaire, () => {
+            if (this.nombreRenardsLivrés === 1) {
                 this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
-            };
-        });
+            }
+            //if (this.nombreRenardsLivrés >= 1) {
+                else for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
+                    const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
+                    this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
+                }
+            //}
 
 
         // résolution de l'écran
@@ -277,7 +288,9 @@ export class lvl3 extends Phaser.Scene {
             this.changedLevelVillage();
         }
         if (this.player.x < 200){
-            this.scene.start("lvl4");
+            this.scene.start("lvl4", {
+                nombreRenardsLivrés : this.nombreRenardsLivrés
+            });
         }
     }
 

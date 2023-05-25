@@ -4,8 +4,6 @@ export class lvl2 extends Phaser.Scene {
         super("lvl2");
     }
 
-    init(data){this.magatamaCount = this.registry.get("magatamaCount")};
-
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
@@ -28,6 +26,7 @@ export class lvl2 extends Phaser.Scene {
     }
 
     create() {
+
         this.player;
         this.renard;
         this.clef;
@@ -148,6 +147,9 @@ export class lvl2 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-1675);
         }
+        if (this.cursors.space.isDown && !this.player.body.blocked.down) {
+            this.doubleSaut()
+        };
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
@@ -433,18 +435,21 @@ export class lvl2 extends Phaser.Scene {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
             if (this.cursors.space.isDown) {
               console.log("Saut effectué.");
-      
               // Appliquer une vélocité vers le haut pour le double saut
-              this.player.setVelocityY(-725);
               this.magatama.setVisible(false);
-              this.doubleJumpAvailable = false;
-              this.doubleJumpCooldown = true;
                 
           } else {
             console.log("Double saut déjà utilisé ou le joueur est au sol.");
           }
+        }
     }
-}
+
+    doubleSaut() {
+        if (this.nombreRenardsLivrés > 0){
+            this.player.setVelocityY(-725);
+            this.nombreRenardsLivrés--;
+        };
+    }
 
     cinematic1() {
 
@@ -469,7 +474,9 @@ export class lvl2 extends Phaser.Scene {
     }
 
     changedLevelVillage(){
-        this.scene.start("Village");
+        this.scene.start("Village", {
+            nombreRenardsLivrés : this.nombreRenardsLivrés
+        });
     }
 }
 
