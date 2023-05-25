@@ -135,9 +135,9 @@ export class lvl2 extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-1260);
+            this.player.setVelocityX(-260);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(1260);
+            this.player.setVelocityX(260);
         } else {
             this.player.setVelocityX(0);
         }
@@ -145,7 +145,7 @@ export class lvl2 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-1675);
+            this.player.setVelocityY(-675);
         }
         if (this.cursors.space.isDown && !this.player.body.blocked.down) {
             this.doubleSaut()
