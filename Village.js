@@ -2,6 +2,8 @@ export class Village extends Phaser.Scene {
 
     constructor() {
         super("Village");
+        this.magatamaCount;
+
     }
 
     preload() {
@@ -35,7 +37,7 @@ export class Village extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.montrer = false;
-
+        this.magatamaCount = this.magatamaCount || 0;
         
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
@@ -43,7 +45,6 @@ export class Village extends Phaser.Scene {
 
         this.plateformes3.setCollisionByProperty({estSolid: true});
 
-        this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
 
         this.player = this.physics.add.sprite(640, 3832, 'nikko');
         this.player.setCollideWorldBounds(true);
@@ -58,6 +59,20 @@ export class Village extends Phaser.Scene {
         this.physics.add.collider(this.pnj, this.plateformes3);
         //this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
+
+        this.physics.add.overlap(this.player, this.sanctuaire, () => {
+          if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
+              this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
+              this.magatamaCount = this.nombreRenardsLivrés;
+          }
+          if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
+              for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
+                  const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
+                  this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
+                  this.magatamaCount = this.nombreRenardsLivrés;
+              }
+          }
+        });
 
 
         // résolution de l'écran

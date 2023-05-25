@@ -1,0 +1,15 @@
+this.sautsUtilises = 0;
+// variable a mettre qui compte le nombre de saut déjà utilisé (a mettre dans la fonction qui débloque le saut et le remet indispo)
+
+this.sautUtilises++;
+// a mettre des que le joueur fait un double saut
+
+this.physics.add.overlap(this.player, blocSauvegarde, this.redebloquerSauts, null, this);
+//Définissez une fonction redebloquerSauts qui sera appelée lorsque le joueur touche le bloc. Elle sera dans create
+
+
+redebloquerSauts() {
+    this.sautUtilises = 0;
+}
+
+//faire une fonction qui permet de réinitialiser le nombre de magatama

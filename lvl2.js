@@ -4,6 +4,8 @@ export class lvl2 extends Phaser.Scene {
         super("lvl2");
     }
 
+    init(data){this.magatamaCount = this.registry.get("magatamaCount")};
+
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
@@ -33,6 +35,8 @@ export class lvl2 extends Phaser.Scene {
         this.sanctuaire;
         this.ennemi;
         this.magatama;
+        this.magatamaCount;
+        this.nombreRenardsLivrés = 0;
         this.renard = null;
         this.gameOver = false;
         this.hasKey = false;
@@ -76,10 +80,15 @@ export class lvl2 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
-            console.log("foiz")
-            if (this.renardIsFollowing) {
+            if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
                 this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
-            };
+            }
+            if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
+                for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
+                    const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
+                    this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
+                }
+            }
         });
 
 
@@ -294,7 +303,11 @@ export class lvl2 extends Phaser.Scene {
 
 
     recruterRenard() {
+        
+            // Le reste du code de la fonction...
+        
         // Vérifie si un renard existe déjà
+        this.nombreRenardsLivrés++;
         if (this.renard) {
             // Détruit le renard actuel
             this.renard.destroy();
