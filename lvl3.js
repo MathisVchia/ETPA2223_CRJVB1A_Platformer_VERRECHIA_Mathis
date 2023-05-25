@@ -138,6 +138,9 @@ export class lvl3 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
+        if (this.cursors.space.isDown && !this.player.body.blocked.down) {
+            this.doubleSaut()
+        };
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
@@ -415,24 +418,27 @@ export class lvl3 extends Phaser.Scene {
       }
       
 
-    gainSaut() {
-          // Vérifier si le double saut est activé
-          if (this.doubleJumpAvailable && this.doubleSautAutorise && !this.player.body.blocked.down) {
-            // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
-            if (this.cursors.space.isDown) {
-              console.log("Saut effectué.");
-      
-              // Appliquer une vélocité vers le haut pour le double saut
-              this.player.setVelocityY(-725);
-              this.magatama.setVisible(false);
-              this.doubleJumpAvailable = false;
-              this.doubleJumpCooldown = true;
-                
-          } else {
-            console.log("Double saut déjà utilisé ou le joueur est au sol.");
-          }
+      gainSaut() {
+        // Vérifier si le double saut est activé
+        if (this.doubleJumpAvailable && this.doubleSautAutorise && !this.player.body.blocked.down) {
+          // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
+          if (this.cursors.space.isDown) {
+            console.log("Saut effectué.");
+            // Appliquer une vélocité vers le haut pour le double saut
+            this.magatama.setVisible(false);
+              
+        } else {
+          console.log("Double saut déjà utilisé ou le joueur est au sol.");
+        }
+      }
     }
-}
+
+    doubleSaut() {
+        if (this.nombreRenardsLivrés > 0){
+            this.player.setVelocityY(-725);
+            this.nombreRenardsLivrés--;
+        };
+    }
 
     //changedLevelVillage(){
         //this.scene.start("Village");
