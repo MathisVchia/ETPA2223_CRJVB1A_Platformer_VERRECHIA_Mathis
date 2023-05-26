@@ -35,7 +35,7 @@ export class lvl2 extends Phaser.Scene {
         this.magatama;
         this.magatamaCount;
         this.nombreRenardsLivrés = 0;
-        this.doubleJumpCount = 0;
+        this.actionDebloque = 0;
         this.renard = null;
         this.gameOver = false;
         this.hasKey = false;
@@ -86,12 +86,14 @@ export class lvl2 extends Phaser.Scene {
             if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
                 this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
                 this.magatamaCount++;
+                this.actionDebloque++;
             }
             if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
                 for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
                     const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
                     this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
                     this.magatamaCount++;
+                    this.actionDebloque++;
                 }
             }
         });
@@ -153,9 +155,6 @@ export class lvl2 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
-
-        //Pour ajuster le nombre de double sauts
-        this.doubleJumpCount = this.magatamaCount;
     
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
@@ -434,20 +433,20 @@ export class lvl2 extends Phaser.Scene {
 
     gainSaut() {
           // Vérifier si le double saut est activé
-          if(this.doubleJumpCount > 0){
-            if (this.doubleJumpAvailable && this.doubleSautAutorise && !this.player.body.blocked.down) {
-                // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
-                if (this.cursors.space.isDown) {
-                    this.doubleJumpCount--;
-                    this.player.setVelocityY(-725);
-                    this.magatama.setVisible(false);
-                  
-            } else {
-                console.log("Double saut déjà utilisé ou le joueur est au sol.");
-                }
-            }
-        }   
-    }
+        if ((this.doubleJumpAvailable > 0) && this.doubleSautAutorise && !this.player.body.blocked.down) {
+            // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
+            if (this.cursors.space.isDown) {
+              console.log("Saut effectué.");
+              // Appliquer une vélocité vers le haut pour le double saut
+              this.player.setVelocityY(-725);
+              this.magatama.setVisible(false);
+              this.nombreRenardsLivrés--;
+                
+          } else {
+            console.log("Double saut déjà utilisé ou le joueur est au sol.");
+          }
+        }
+    } 
     cinematic1() {
 
         // Bloque les mouvements du joueur
@@ -471,7 +470,9 @@ export class lvl2 extends Phaser.Scene {
     }
 
     changedLevelVillage(){
-        this.scene.start("Village");
+        this.scene.start("Village", {
+            nombreRenardsLivrés : this.nombreRenardsLivrés
+        });
     }
 }
 

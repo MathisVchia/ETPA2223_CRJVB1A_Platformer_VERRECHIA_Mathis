@@ -5,7 +5,10 @@ export class Village extends Phaser.Scene {
 
     }
 
-    init(data){this.magatamaCount = this.registry.get("magatamaCount")};
+    init(data) {
+      this.nombreRenardsLivrés = data.nombreRenardsLivrés;
+      console.log(this.nombreRenardsLivrés);
+    }
 
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
@@ -64,16 +67,16 @@ export class Village extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
           if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
               this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
-              this.registry.set("magatamaCount", this.nombreRenardsLivrés);
+              this.magatamaCount++;
           }
           if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
               for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
                   const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
                   this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
-                  this.registry.set("magatamaCount", this.nombreRenardsLivrés);
+                  this.magatamaCount++;
               }
           }
-        });
+      });
 
 
         // résolution de l'écran
@@ -370,7 +373,9 @@ export class Village extends Phaser.Scene {
        // Lorsqu'on appuie sur le bouton, on lance le jeu
        console.log("Est ce que tu me sens hého")
        bouton2.on("pointerdown", () => {
-           this.scene.start("lvl3");
+          this.scene.start("lvl3", {
+            nombreRenardsLivrés : this.nombreRenardsLivrés
+        });
        });
 
        console.log (bouton);
