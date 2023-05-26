@@ -18,16 +18,12 @@ export class lvl1 extends Phaser.Scene {
     }
 
     create() {
-        this.player;
-        this.renard;
-        this.clef;
-        this.porte;
+
+        //Creation des variables
+        this.player; //var player
         this.sanctuaire;
-        this.ennemi;
         this.magatama;
-        this.renard = null;
         this.gameOver = false;
-        this.hasKey = false;
         this.dbSaut = false;
         this.canClimb = false;
         this.changeLevel = false;
@@ -36,22 +32,18 @@ export class lvl1 extends Phaser.Scene {
         const endZoomX = 7040;
         const startZoomValue = 1;
         const endZoomValue = 1.5;
-        const halfwayZoomPercentage = 0.5; // Zoom when the player is halfway between startZoomX and endZoomX
+        const halfwayZoomPercentage = 0.5; // Zoom pour faire un effet
 
-            
+        // Load des maps/layers de maps    
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
         this.plateformes = this.map1.createLayer('Plateformes', this.tileset);
-
         this.plateformes.setCollisionByProperty({estSolid: true});
 
-        //this.magatama = this.add.image(55,105,'magatama').setScale(1).setScrollFactor(0);
-
+        //Créa perso
         this.player = this.physics.add.sprite(128, 3074, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
-
-
         this.physics.add.collider(this.player, this.plateformes);
 
 
@@ -59,11 +51,6 @@ export class lvl1 extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
         this.player.setCollideWorldBounds(true);
-
-        //this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
-        //this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
-        //this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
-        //this.detectionZone.setGravityY (0);
 
         // création de la caméra
         // taille de la caméra
@@ -73,8 +60,8 @@ export class lvl1 extends Phaser.Scene {
         this.cameras.main.setDeadzone(100,100);
         //this.cameras.main.setBounds(0,0,4160,3456);
 
+        //Mapping des touches
         this.interactButton = this.input.keyboard.addKey('E');
-
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.physics.world.setBounds(0, 0, 22000, 10000);
@@ -120,7 +107,7 @@ export class lvl1 extends Phaser.Scene {
             // Aucune collision
             this.canClimb = false;
         }
-
+        //Pour faire en sorte de rebondir sur le mur
         if (this.canClimb) {
             if (this.cursorsUp.isDown && !this.dbSaut) {
                 // Définir la vitesse de montée
@@ -133,11 +120,12 @@ export class lvl1 extends Phaser.Scene {
                 });
             }
         }
-
+        // Passer a un autre lvl
         if ( this.player.x > 18800){
             this.changedLevel();
         }
 
+        //Petit effet zoom bien sympathique
         if (this.player.x > 4988 && this.player.x < 7040 && this.player.x > 17533) {
             const startZoomX = 4988;
             const endZoomX = 7040;

@@ -2,12 +2,11 @@ export class Village extends Phaser.Scene {
 
     constructor() {
         super("Village");
+
     }
 
-    init(data) {
-      this.nombreRenardsLivrés = data.nombreRenardsLivrés;
-      console.log(this.nombreRenardsLivrés);
-    }
+    init(data){this.magatamaCount = this.registry.get("magatamaCount")};
+
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
@@ -39,7 +38,8 @@ export class Village extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.montrer = false;
-
+        this.nombreRenardsLivrés = this.magatamaCount;
+        
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
         this.plateformes3 = this.map3.createLayer('Plateformes', this.tileset);
@@ -61,17 +61,19 @@ export class Village extends Phaser.Scene {
         //this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
-        //this.physics.add.overlap(this.player, this.sanctuaire, () => {
-          if (this.nombreRenardsLivrés === 1) {
+        this.physics.add.overlap(this.player, this.sanctuaire, () => {
+          if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
               this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
+              this.registry.set("magatamaCount", this.nombreRenardsLivrés);
           }
-          //if (this.nombreRenardsLivrés >= 1) {
-              else for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
+          if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
+              for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
                   const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
                   this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
+                  this.registry.set("magatamaCount", this.nombreRenardsLivrés);
               }
-          //}
-        //});
+          }
+        });
 
 
         // résolution de l'écran
@@ -234,7 +236,7 @@ export class Village extends Phaser.Scene {
         }
         
         // Recommencer le niveau "lvl1"
-        this.scene.start("Village");
+        this.scene.start("lvl1");
       }
       
 
@@ -353,9 +355,7 @@ export class Village extends Phaser.Scene {
        // Lorsqu'on appuie sur le bouton, on lance le jeu
        console.log("Est ce que tu m'entends hého")
        bouton.on("pointerdown", () => {
-           this.scene.start("lvl2", {
-            nombreRenardsLivrés : this.nombreRenardsLivrés
-           });
+           this.scene.start("lvl2");
        });
 
        // Créer le texte interactif
@@ -370,9 +370,7 @@ export class Village extends Phaser.Scene {
        // Lorsqu'on appuie sur le bouton, on lance le jeu
        console.log("Est ce que tu me sens hého")
        bouton2.on("pointerdown", () => {
-           this.scene.start("lvl3", {
-            nombreRenardsLivrés : this.nombreRenardsLivrés
-           });
+           this.scene.start("lvl3");
        });
 
        console.log (bouton);
