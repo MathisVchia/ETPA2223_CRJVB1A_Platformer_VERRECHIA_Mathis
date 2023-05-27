@@ -2,12 +2,11 @@ export class Village extends Phaser.Scene {
 
     constructor() {
         super("Village");
-
     }
 
     init(data) {
-      this.nombreRenardsLivrés = data.nombreRenardsLivrés;
-      console.log(this.nombreRenardsLivrés);
+      this.nombreMagatama = data.nombreMagatama;
+      this.nombreSauvegarde = data.nombreSauvegarde;
     }
 
     preload() {
@@ -16,12 +15,12 @@ export class Village extends Phaser.Scene {
         this.load.spritesheet('pnj', 'assets/characters/pnj.png',
         {frameWidth : 128, frameHeight : 256});
 
-        //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        //{frameWidth: 128, frameHeight : 128});
-
-
         this.load.image('tileset', 'assets/objects/tileset.png');
-        this.load.image('magatama', 'assets/objects/magatama.png');
+        this.load.image('1_maga', 'assets/objects/1_maga.png');
+        this.load.image('2_maga', 'assets/objects/2_maga.png');
+        this.load.image('3_maga', 'assets/objects/3_maga.png');
+        this.load.image('4_maga', 'assets/objects/4_maga.png');
+        this.load.image('5_maga', 'assets/objects/5_maga.png');
         this.load.tilemapTiledJSON('map3', 'assets/maps/Village.json');
         
     }
@@ -29,19 +28,13 @@ export class Village extends Phaser.Scene {
     create() {
         this.player;
         this.renard;
-        this.clef;
-        this.porte;
-        this.sanctuaire;
         this.ennemi;
-        this.magatama;
         this.renard = null;
         this.gameOver = false;
-        this.hasKey = false;
         this.dbSaut = false;
         this.canClimb = false;
         this.actionExecuted = false;
         this.montrer = false;
-        this.nombreRenardsLivrés = this.magatamaCount;
         
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
@@ -61,33 +54,15 @@ export class Village extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.plateformes3);
         this.physics.add.collider(this.pnj, this.plateformes3);
-        //this.physics.add.collider(this.renard, this.plateformes);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
-        this.physics.add.overlap(this.player, this.sanctuaire, () => {
-          if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
-              this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
-              this.magatamaCount++;
-          }
-          if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
-              for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
-                  const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
-                  this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
-                  this.magatamaCount++;
-              }
-          }
-      });
-
-
+        this.magatamaImages = [];
+        this.displayMagatamaImage();
+        
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
         this.player.setCollideWorldBounds(true);
-
-        //this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
-        //this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
-        //this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
-        //this.detectionZone.setGravityY (0);
 
         // création de la caméra
         // taille de la caméra
@@ -97,16 +72,12 @@ export class Village extends Phaser.Scene {
         this.cameras.main.setDeadzone(100,100);
         //this.cameras.main.setBounds(0,0,4160,3456);
 
-        this.interactButton = this.input.keyboard.addKey('E');
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-
         this.physics.world.setBounds(0, 0, 22000, 10000);
         this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
-        //this.cursors = this.input.keyboard.createCursorKeys();
-
+        this.interactButton = this.input.keyboard.addKey('E');
+        this.cursors = this.input.keyboard.createCursorKeys();
         this.cursorsUp = this.input.keyboard.addKey('Z');
         this.cursorsLeft = this.input.keyboard.addKey('Q')
         this.cursorsRight = this.input.keyboard.addKey('D')
@@ -144,7 +115,8 @@ export class Village extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
-    
+        
+        this.displayMagatamaImage();
 
         // Mettre à jour la position de la zone de détection devant le joueur
         //this.detectionZone.x = this.player.x + 64;
@@ -229,19 +201,20 @@ export class Village extends Phaser.Scene {
     };
 }
 
+    displayMagatamaImage() {
+      // Supprime les images de magatama existantes
+      this.magatamaImages?.forEach((image) => image.destroy());
+      this.magatamaImages = [];
 
-
-    recommencerNiveau() {
-        // Si le renard suit encore le joueur, le faire disparaitre
-        if (this.renardIsFollowing) {
-          this.renardIsFollowing = false;
-          this.renard.disableBody(true, true);
-        }
-        
-        // Recommencer le niveau "lvl1"
-        this.scene.start("lvl1");
+      // Affiche l'image correspondante à nombreMagatama
+      for (let i = 0; i < this.nombreMagatama; i++) {
+          const magatamaImage = this.add
+              .image(55 + i * 32, 105, `${i + 1}_maga`)
+              .setScale(1)
+              .setScrollFactor(0);
+          this.magatamaImages.push(magatamaImage);
       }
-      
+    }      
 
     gainSaut() {
           // Vérifier si le double saut est activé

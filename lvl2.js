@@ -21,7 +21,11 @@ export class lvl2 extends Phaser.Scene {
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
-        this.load.image('magatama', 'assets/objects/magatama.png');
+        this.load.image('1_maga', 'assets/objects/1_maga.png');
+        this.load.image('2_maga', 'assets/objects/2_maga.png');
+        this.load.image('3_maga', 'assets/objects/3_maga.png');
+        this.load.image('4_maga', 'assets/objects/4_maga.png');
+        this.load.image('5_maga', 'assets/objects/5_maga.png');
         this.load.tilemapTiledJSON('map2', 'assets/maps/V1Lvl2.json');
     }
 
@@ -33,17 +37,16 @@ export class lvl2 extends Phaser.Scene {
         this.sanctuaire;
         this.ennemi;
         this.magatama;
-        this.magatamaCount;
-        this.nombreRenardsLivrés = 0;
-        this.actionDebloque = 0;
         this.renard = null;
         this.gameOver = false;
         this.hasKey = false;
         this.dbSaut = false;
         this.canClimb = false;
         this.actionExecuted = false;
-        this.magatama = null;
         this.doubleJumpAvailable = false;
+
+        this.nombreMagatama = 0;
+        this.nombreSauvegarde = 0;
 
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
@@ -54,7 +57,7 @@ export class lvl2 extends Phaser.Scene {
 
         this.player = this.physics.add.sprite(112, 2544, 'nikko');
         this.player.setCollideWorldBounds(true);
-        this.player.body.setGravityY(1600);
+        this.player.body.setGravityY(1650);
 
         this.renard = this.physics.add.sprite(4800, 3530, 'renard');
         this.renard.setCollideWorldBounds(true);
@@ -75,39 +78,18 @@ export class lvl2 extends Phaser.Scene {
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
 
-
+        this.magatamaImages = [];
+        this.displayMagatamaImage();
 
         this.physics.add.collider(this.player, this.plateformes2);
         this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
-        this.physics.add.overlap(this.player, this.sanctuaire, () => {
-            if (this.renardIsFollowing && this.nombreRenardsLivrés === 1) {
-                this.magatama = this.add.image(55, 105, 'magatama').setScale(1).setScrollFactor(0);
-                this.magatamaCount++;
-                this.actionDebloque++;
-            }
-            if (this.renardIsFollowing && this.nombreRenardsLivrés >= 1) {
-                for (let i = 1; i <= this.nombreRenardsLivrés; i++) {
-                    const offsetX = i * 50; // Décalage horizontal pour chaque magatama supplémentaire
-                    this.magatama = this.add.image(55 + offsetX, 105, 'magatama').setScale(1).setScrollFactor(0);
-                    this.magatamaCount++;
-                    this.actionDebloque++;
-                }
-            }
-        });
-
-
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
         this.player.setCollideWorldBounds(true);
-
-        //this.detectionZone = this.physics.add.sprite(this.player.x, this.player.y, null);
-        //this.detectionZone.setSize(128, 256); // Ajustez la taille selon les dimensions des blocs
-        //this.detectionZone.setOffset(0, -128); // Ajustez l'offset selon la position de la zone devant le joueur
-        //this.detectionZone.setGravityY (0);
 
         // création de la caméra
         // taille de la caméra
@@ -133,8 +115,6 @@ export class lvl2 extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
-
-
     }
 
     update() {
@@ -155,7 +135,7 @@ export class lvl2 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
-    
+
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
         if (distanceToRenard < 150 && this.interactButton.isDown && !this.renardIsFollowing) {
@@ -215,13 +195,21 @@ export class lvl2 extends Phaser.Scene {
             }
         });
 
+        this.physics.add.overlap(this.player, this.sauvegarde, () => {
+            console.log("save")
+            this.recupSave();
+        });
+
             // Ajout collision joueur sanctuaire
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
             if (this.renardIsFollowing) {
                 // Détruit le renard actuel
                 this.renard.destroy();
                 console.log("SANCTUTU")
-                this.doubleJumpAvailable = true;
+                this.nombreMagatama++;
+                console.log(this.nombreMagatama);
+                this.nombreSauvegarde++;
+                this.displayMagatamaImage();
 
               // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
             function getRandomPositionAroundSanctuaire() {
@@ -258,15 +246,14 @@ export class lvl2 extends Phaser.Scene {
             });
 
                 // Réinitialise la variable renardIsFollowing
-                this.renardIsFollowing = false;
-                this.doubleSautAutorise = true;
-                
+                this.renardIsFollowing = false;                
             }
         });
 
         console.log (this.doubleSautAutorise)
-        if (this.doubleSautAutorise === true){
-            this.gainSaut()
+        if (this.nombreMagatama > 0){
+                this.displayMagatamaImage();
+                this.gainSaut()
         };
 
 
@@ -305,6 +292,20 @@ export class lvl2 extends Phaser.Scene {
         }
     }
 
+    displayMagatamaImage() {
+        // Supprime les images de magatama existantes
+        this.magatamaImages?.forEach((image) => image.destroy());
+        this.magatamaImages = [];
+
+        // Affiche l'image correspondante à nombreMagatama
+        for (let i = 0; i < this.nombreMagatama; i++) {
+            const magatamaImage = this.add
+                .image(55 + i * 32, 105, `${i + 1}_maga`)
+                .setScale(1)
+                .setScrollFactor(0);
+            this.magatamaImages.push(magatamaImage);
+        }
+    }
 
     recruterRenard() {
         
@@ -433,14 +434,13 @@ export class lvl2 extends Phaser.Scene {
 
     gainSaut() {
           // Vérifier si le double saut est activé
-        if ((this.doubleJumpAvailable > 0) && this.doubleSautAutorise && !this.player.body.blocked.down) {
+        if ((this.nombreMagatama > 0) && !this.player.body.blocked.down) {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
             if (this.cursors.space.isDown) {
               console.log("Saut effectué.");
               // Appliquer une vélocité vers le haut pour le double saut
               this.player.setVelocityY(-725);
-              this.magatama.setVisible(false);
-              this.nombreRenardsLivrés--;
+              this.nombreMagatama--;
                 
           } else {
             console.log("Double saut déjà utilisé ou le joueur est au sol.");
@@ -471,8 +471,13 @@ export class lvl2 extends Phaser.Scene {
 
     changedLevelVillage(){
         this.scene.start("Village", {
-            nombreRenardsLivrés : this.nombreRenardsLivrés
+            nombreMagatama : this.nombreMagatama,
+            nombreSauvegarde : this.nombreSauvegarde
         });
+    }
+
+    recupSave(){
+        this.nombreMagatama = this.nombreSauvegarde;
     }
 }
 
