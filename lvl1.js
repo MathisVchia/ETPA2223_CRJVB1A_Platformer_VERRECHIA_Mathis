@@ -120,6 +120,9 @@ export class lvl1 extends Phaser.Scene {
                 });
             }
         }
+
+        this.displayMagatamaImage();
+        
         // Passer a un autre lvl
         if ( this.player.x > 18800){
             this.changedLevel();
@@ -143,6 +146,21 @@ export class lvl1 extends Phaser.Scene {
 
     changedLevel(){
         this.scene.start("lvl2");
+    }
+
+    displayMagatamaImage() {
+        // Supprime les images de magatama existantes
+        this.magatamaImages?.forEach((image) => image.destroy());
+        this.magatamaImages = [];
+
+        // Affiche l'image correspondante à nombreMagatama
+        for (let i = 0; i < this.nombreMagatama; i++) {
+            const magatamaImage = this.add
+                .image(55 + i * 32, 105, `${i + 1}_maga`)
+                .setScale(1)
+                .setScrollFactor(0);
+            this.magatamaImages.push(magatamaImage);
+        }
     }
 
 }

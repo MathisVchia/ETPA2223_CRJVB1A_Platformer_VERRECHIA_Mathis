@@ -21,6 +21,7 @@ export class lvl2 extends Phaser.Scene {
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('0_maga', 'assets/objects/0_maga.png');
         this.load.image('1_maga', 'assets/objects/1_maga.png');
         this.load.image('2_maga', 'assets/objects/2_maga.png');
         this.load.image('3_maga', 'assets/objects/3_maga.png');

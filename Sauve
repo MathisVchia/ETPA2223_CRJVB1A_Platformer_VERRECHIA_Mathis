@@ -21,3 +21,23 @@ redebloquerSauts() {
 
 
 //DEMAIN FAIRE UNE SAUVEGARDE QUI FAIT RETROUVER LE NOMBRE DE NOMBRERENARDLIVRE AVEC LE NOMBRE DE ACTIONDEBLOQUE QU'ON A AUGMENTE  PREALABLEMENT DANS LE CODE POUR OBTENIR LES MAGATAMAS
+
+
+ //Afficher le nombre de magatama a l'écran
+
+ if (this.nombreMagatama == 1){
+    this.add.image(55, 105, '1_maga').setScale(1).setScrollFactor(0);
+    console.log("siudbf")
+}
+if (this.nombreMagatama == 2){
+    this.add.image(55, 105, '2_maga').setScale(1).setScrollFactor(0);
+}
+if (this.nombreMagatama == 3){
+    this.add.image(55, 105, '3_maga').setScale(1).setScrollFactor(0);
+}
+if (this.nombreMagatama == 4){
+    this.add.image(55, 105, '4_maga').setScale(1).setScrollFactor(0);
+}
+if (this.nombreMagatama == 5){
+    this.add.image(55, 105, '5_maga').setScale(1).setScrollFactor(0);
+}

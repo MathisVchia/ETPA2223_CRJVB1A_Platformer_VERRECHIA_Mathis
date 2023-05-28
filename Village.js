@@ -347,7 +347,8 @@ export class Village extends Phaser.Scene {
        console.log("Est ce que tu me sens hého")
        bouton2.on("pointerdown", () => {
           this.scene.start("lvl3", {
-            nombreRenardsLivrés : this.nombreRenardsLivrés
+            nombreMagatama : this.nombreMagatama,
+            nombreSauvegarde : this.nombreSauvegarde
         });
        });
 
