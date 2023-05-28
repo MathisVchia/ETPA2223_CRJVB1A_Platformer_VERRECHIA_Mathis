@@ -22,7 +22,7 @@ export class Menu extends Phaser.Scene {
 
         // Lorsqu'on appuie sur le bouton, on lance le jeu
         bouton.on("pointerdown", () => {
-            this.scene.start("lvl2");
+            this.scene.start("lvl4");
         });
     }
 

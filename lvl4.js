@@ -11,9 +11,11 @@ export class lvl4 extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
-        {frameWidth : 128, frameHeight : 256});
+        {frameWidth: 128, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('enfant', 'assets/characters/enfant.png',
+        {frameWidth: 128, frameHeight : 256});
         this.load.spritesheet('clef', 'assets/objects/clef.png',
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('porte', 'assets/objects/porte.png',
@@ -48,6 +50,7 @@ export class lvl4 extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.magatama = null;
+        this.gainDash = false;
         
         this.map5 = this.add.tilemap('map5');
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
@@ -63,6 +66,10 @@ export class lvl4 extends Phaser.Scene {
         this.player = this.physics.add.sprite(15612, 2366, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
+
+        this.enfant = this.physics.add.sprite(768, 3454, 'enfant');
+        this.enfant.setCollideWorldBounds(true);
+        this.enfant.body.setGravityY (1600);
         
         this.renard = this.physics.add.sprite(11136, 2688, 'renard');
         this.renard.setCollideWorldBounds(true);
@@ -103,14 +110,12 @@ export class lvl4 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
-        //this.cursors = this.input.keyboard.createCursorKeys();
-
         this.cursorsUp = this.input.keyboard.addKey('Z');
         this.cursorsLeft = this.input.keyboard.addKey('Q')
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
-
+        this.dashButton = this.input.keyboard.addKey('SHIFT');
 
     }
 
@@ -130,7 +135,19 @@ export class lvl4 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-675);
+            this.player.setVelocityY(-1675);
+        }
+
+        // Dash (2eme Meca)
+        if(this.dashButton.isDown){
+            this.dash();
+            this.gainDash = true;
+        }
+
+        //Vérifie si le joueur est proche de 'lenfant et si le bouton d'interaction a été pressé
+        const distanceToEnfant = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enfant.x, this.enfant.y);
+        if (distanceToEnfant < 150 && this.interactButton.isDown){
+            this.gainDash = true;
         }
 
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
@@ -371,7 +388,7 @@ export class lvl4 extends Phaser.Scene {
         }
         
         // Recommencer le niveau "lvl1"
-        this.scene.start("lvl3");
+        this.scene.start("lvl4");
       }
       
 
@@ -395,8 +412,41 @@ export class lvl4 extends Phaser.Scene {
         this.nombreMagatama = this.nombreSauvegarde;
     }
 
+    dash() {
+
+        if (this.gainDash = true){
+        
+            // Calculate the target position based on the player's current position and direction
+            let targetX;
+            if (this.cursorsLeft.isDown) {
+                targetX = this.player.x - 400;
+            }
+            else if (this.cursorsRight.isDown){
+                targetX = this.player.x + 400;
+            }
+            else{targetX = this.player.x}
+            const targetY = this.player.y;
+            this.gainDash = false;
+            // Disable player controls during the dash
+            this.player.setVelocity(0, 0);
+        
+            // Create a tween to move the player to the target position quickly
+            this.tweens.add({
+            targets: this.player,
+            x: targetX,
+            y: targetY,
+            ease: 'Linear',
+            duration: 200, // Adjust the duration as needed
+            onComplete: () => {
+                // Re-enable player controls and show the player sprite
+                this.player.enableBody(true, this.player.x, this.player.y);
+            }
+            });
+        //};
+      }
+
     //changedLevelVillage(){
         //this.scene.start("Village");
-    //}
+    }
 }
 
