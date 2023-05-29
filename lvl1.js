@@ -2,6 +2,8 @@ export class lvl1 extends Phaser.Scene {
 
     constructor() {
         super("lvl1");
+        this.player = null;
+        this.canMove = false; // Variable de contrôle pour activer les mouvements du joueur
     }
 
     preload() {
@@ -46,6 +48,20 @@ export class lvl1 extends Phaser.Scene {
         this.player.body.setGravityY(1600);
         this.physics.add.collider(this.player, this.plateformes);
 
+         // Empêche le joueur de bouger initialement
+         this.player.setImmovable(true);
+         this.player.body.moves = false;
+ 
+         // Appel de la fonction displayCinematicText après un délai de 500ms
+         this.time.delayedCall(500, this.displayCinematicText, [], this);
+ 
+         // Activation des mouvements du joueur après 15 secondes
+         this.time.delayedCall(15000, () => {
+             this.canMove = true;
+             this.player.setImmovable(false);
+             this.player.body.moves = true;
+         }, [], this);
+
 
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
@@ -82,14 +98,16 @@ export class lvl1 extends Phaser.Scene {
 
         const isPlayerTouchingDoor = this.physics.overlap(this.player, this.door);
         
-        // ajout des moyens de déplacement du personnage
-        if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-260);
-        } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(260);
-        } else {
-            this.player.setVelocityX(0);
-        }
+         // Vérifiez si les mouvements du joueur sont autorisés avant de les gérer
+         if (this.canMove) {
+            // Gérez les mouvements du joueur
+            if (this.cursorsLeft.isDown) {
+                this.player.setVelocityX(-460);
+            } else if (this.cursorsRight.isDown) {
+                this.player.setVelocityX(460);
+            } else {
+                this.player.setVelocityX(0);
+            }
     
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
@@ -129,7 +147,7 @@ export class lvl1 extends Phaser.Scene {
         }
 
         //Petit effet zoom bien sympathique
-        if (this.player.x > 4988 && this.player.x < 7040 && this.player.x > 17533) {
+        if (this.player.x > 4988 && this.player.x < 7040 || this.player.x > 17533) {
             const startZoomX = 4988;
             const endZoomX = 7040;
             const startZoomValue = 1;
@@ -139,9 +157,15 @@ export class lvl1 extends Phaser.Scene {
             const zoomValue = startZoomValue + (endZoomValue - startZoomValue) * zoomPercentage;
     
             this.cameras.main.setZoom(zoomValue);
-        } else {
-            this.cameras.main.setZoom(1); // Reset zoom to default value
+            } else {
+                this.cameras.main.setZoom(1); // Reset zoom to default value
+            }
         }
+
+        if (this.cinematicText) {
+            this.cinematicText.setPosition(this.player.x, this.player.y - 178);
+        }
+
     }
 
     changedLevel(){
@@ -163,4 +187,38 @@ export class lvl1 extends Phaser.Scene {
         }
     }
 
+    displayCinematicText() {
+        // Création du texte
+        this.cinematicText = this.add.text(this.player.x, this.player.y - 528, "Qu'est ce que... ?", {
+            fontSize: "24px",
+            fontFamily: "Arial",
+            color: "#ffffff",
+            backgroundColor: "#000000",
+            padding: {
+                x: 16,
+                y: 8
+            }
+        }).setOrigin(0.5);
+    
+        // Animation du texte (facultatif)
+        this.tweens.add({
+            targets: this.cinematicText,
+            //alpha: 0,
+            y: this.player.y - 200,
+            ease: 'Power1',
+            duration: 15000,
+            onComplete: () => {
+                this.cinematicText.destroy();
+                this.cinematicText = null;
+            }
+        });
+    
+        // Effet de tremblement de l'écran
+        const shakeDuration = 800; // Durée du tremblement (en millisecondes)
+        const shakeIntensity = 5; // Intensité du tremblement (en pixels)
+    
+        this.cameras.main.shake(shakeDuration, shakeIntensity);
+    }
+
 }
+    

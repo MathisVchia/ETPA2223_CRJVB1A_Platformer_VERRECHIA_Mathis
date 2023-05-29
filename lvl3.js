@@ -15,6 +15,8 @@ export class lvl3 extends Phaser.Scene {
         {frameWidth : 128, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
         {frameWidth: 128, frameHeight : 128});
+        this.load.spritesheet('tireur', 'assets/characters/tireur.png',
+        {frameWidth: 128, frameHeight : 256});
         this.load.spritesheet('clef', 'assets/objects/clef.png',
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('porte', 'assets/objects/porte.png',
@@ -126,9 +128,9 @@ export class lvl3 extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-260);
+            this.player.setVelocityX(-460);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(260);
+            this.player.setVelocityX(460);
         } else {
             this.player.setVelocityX(0);
         }
@@ -412,9 +414,13 @@ export class lvl3 extends Phaser.Scene {
         this.nombreMagatama = this.nombreSauvegarde;
     }
 
-    //changedLevelVillage(){
-        //this.scene.start("Village");
-    //}
+    changedLevelVillage(){
+        this.scene.start("Village", {
+            nombreMagatama : this.nombreMagatama,
+            nombreSauvegarde : this.nombreSauvegarde,
+            gainDash : this.gainDash
+        });
+    }
 
     dash() {
 

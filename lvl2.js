@@ -212,6 +212,16 @@ export class lvl2 extends Phaser.Scene {
                 this.nombreSauvegarde++;
                 this.displayMagatamaImage();
 
+                const text = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Texte à afficher", {
+                    font: "24px Arial",
+                    fill: "#ffffff"
+                });
+                text.setOrigin(0.5);
+                
+                this.time.delayedCall(5000, () => {
+                    text.destroy(); // Supprime le texte après 5 secondes
+                });
+
               // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
             function getRandomPositionAroundSanctuaire() {
                 const offsetX = Phaser.Math.Between(-100, 100); // Offset horizontal aléatoire

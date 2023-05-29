@@ -131,9 +131,9 @@ export class lvl4 extends Phaser.Scene {
         console.log("le nombre de magatama :", this.nombreMagatama, "et le nombre sauvegarde", this.nombreSauvegarde);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-260);
+            this.player.setVelocityX(-460);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(260);
+            this.player.setVelocityX(460);
         } else {
             this.player.setVelocityX(0);
         }
