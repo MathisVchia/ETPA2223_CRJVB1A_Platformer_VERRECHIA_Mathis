@@ -16,6 +16,8 @@ export class lvl4 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('enfant', 'assets/characters/enfant.png',
         {frameWidth: 128, frameHeight : 256});
+        this.load.spritesheet('enfantSuivi', 'assets/characters/enfantSuivi.png',
+        {frameWidth: 256, frameHeight : 256});
         this.load.spritesheet('clef', 'assets/objects/clef.png',
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('porte', 'assets/objects/porte.png',
@@ -63,13 +65,13 @@ export class lvl4 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        this.player = this.physics.add.sprite(15612, 2366, 'nikko');
+        //this.player = this.physics.add.sprite(15612, 2366, 'nikko');
+        this.player = this.physics.add.sprite(800, 3454, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
 
-        this.enfant = this.physics.add.sprite(768, 3454, 'enfant');
+        this.enfant = this.physics.add.sprite(768, 3582, 'enfant');
         this.enfant.setCollideWorldBounds(true);
-        this.enfant.body.setGravityY (1600);
         
         this.renard = this.physics.add.sprite(11136, 2688, 'renard');
         this.renard.setCollideWorldBounds(true);
@@ -77,6 +79,10 @@ export class lvl4 extends Phaser.Scene {
         this.sauvegarde = this.physics.add.sprite(12928, 2936, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
+
+        this.sauvegarde2 = this.physics.add.sprite(1022, 3458, 'sauvegarde');
+        this.sauvegarde2.setCollideWorldBounds(true);
+        this.sauvegarde2.body.setImmovable(true);
 
         /*this.sauvegarde = this.physics.add.sprite(1792, 4344, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
@@ -141,13 +147,14 @@ export class lvl4 extends Phaser.Scene {
         // Dash (2eme Meca)
         if(this.dashButton.isDown){
             this.dash();
-            this.gainDash = true;
+            
         }
 
         //Vérifie si le joueur est proche de 'lenfant et si le bouton d'interaction a été pressé
         const distanceToEnfant = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enfant.x, this.enfant.y);
         if (distanceToEnfant < 150 && this.interactButton.isDown){
             this.gainDash = true;
+            this.suivreEnfant();
         }
 
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
@@ -184,6 +191,11 @@ export class lvl4 extends Phaser.Scene {
 
 
         this.physics.add.overlap(this.player, this.sauvegarde, () => {
+            console.log("save")
+            this.recupSave();
+        });
+
+        this.physics.add.overlap(this.player, this.sauvegarde2, () => {
             console.log("save")
             this.recupSave();
         });
@@ -268,14 +280,15 @@ export class lvl4 extends Phaser.Scene {
             }
         }
 
-        /*if (this.player.x < 200){
-            this.scene.start("lvl4", {
+        if (this.player.x > 15810){
+            this.scene.start("lvl3", {
                 nombreMagatama : this.nombreMagatama,
-                nombreSauvegarde : this.nombreSauvegarde
+                nombreSauvegarde : this.nombreSauvegarde,
+                gainDash : this.gainDash
             });
-        }*/
+        
+        }
     }
-
     displayMagatamaImage() {
         // Supprime les images de magatama existantes
         this.magatamaImages?.forEach((image) => image.destroy());
@@ -420,9 +433,11 @@ export class lvl4 extends Phaser.Scene {
             let targetX;
             if (this.cursorsLeft.isDown) {
                 targetX = this.player.x - 400;
+                this.nombreMagatama--;
             }
             else if (this.cursorsRight.isDown){
                 targetX = this.player.x + 400;
+                this.nombreMagatama--;
             }
             else{targetX = this.player.x}
             const targetY = this.player.y;
@@ -447,6 +462,10 @@ export class lvl4 extends Phaser.Scene {
 
     //changedLevelVillage(){
         //this.scene.start("Village");
+    }
+
+    suivreEnfant() {
+        this.player.setTexture('enfantSuivi');
     }
 }
 

@@ -7,6 +7,7 @@ export class lvl3 extends Phaser.Scene {
     init(data) {
         this.nombreMagatama = data.nombreMagatama;
         this.nombreSauvegarde = data.nombreSauvegarde;
+        this.gainDash = data.gainDash;
       }
 
     preload() {
@@ -60,10 +61,18 @@ export class lvl3 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        this.player = this.physics.add.sprite(15848, 3448, 'nikko');
-        this.player.setCollideWorldBounds(true);
-        this.player.body.setGravityY(1600);
-        
+        if(this.gainDash = false){
+            this.player = this.physics.add.sprite(15848, 3448, 'nikko');
+            this.player.setCollideWorldBounds(true);
+            this.player.body.setGravityY(1600);
+        }
+
+        if(this.gainDash = true){
+            this.player = this.physics.add.sprite(378, 2809, 'nikko');
+            this.player.setCollideWorldBounds(true);
+            this.player.body.setGravityY(1600);
+        }
+
         this.renard = this.physics.add.sprite(11775, 4090, 'renard');
         this.renard.setCollideWorldBounds(true);
         
@@ -106,6 +115,7 @@ export class lvl3 extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
+        this.dashButton = this.input.keyboard.addKey('SHIFT');
 
 
     }
@@ -128,6 +138,14 @@ export class lvl3 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
+
+        // Dash (2eme Meca)
+        if(this.gainDash = true){
+            if(this.dashButton.isDown){
+                this.dash();
+            }
+        }
+
 
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
@@ -397,5 +415,41 @@ export class lvl3 extends Phaser.Scene {
     //changedLevelVillage(){
         //this.scene.start("Village");
     //}
+
+    dash() {
+
+        if (this.gainDash = true){
+        
+            // Calculate the target position based on the player's current position and direction
+            let targetX;
+            if (this.cursorsLeft.isDown) {
+                targetX = this.player.x - 400;
+                this.nombreMagatama--;
+            }
+            else if (this.cursorsRight.isDown){
+                targetX = this.player.x + 400;
+                this.nombreMagatama--;
+            }
+            else{targetX = this.player.x}
+            const targetY = this.player.y;
+            this.gainDash = false;
+            // Disable player controls during the dash
+            this.player.setVelocity(0, 0);
+        
+            // Create a tween to move the player to the target position quickly
+            this.tweens.add({
+            targets: this.player,
+            x: targetX,
+            y: targetY,
+            ease: 'Linear',
+            duration: 200, // Adjust the duration as needed
+            onComplete: () => {
+                // Re-enable player controls and show the player sprite
+                this.player.enableBody(true, this.player.x, this.player.y);
+            }
+            });
+        //};
+      }
+    }
 }
 
