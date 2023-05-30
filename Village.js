@@ -7,6 +7,8 @@ export class Village extends Phaser.Scene {
     init(data) {
       this.nombreMagatama = data.nombreMagatama;
       this.nombreSauvegarde = data.nombreSauvegarde;
+      this.gainDash = data.gainDash;
+      this.enfantAvecPlayer = data.enfantAvecPlayer;
     }
 
     preload() {
@@ -42,10 +44,17 @@ export class Village extends Phaser.Scene {
 
         this.plateformes3.setCollisionByProperty({estSolid: true});
 
-
+      if(this.enfantAvecPlayer = false){
         this.player = this.physics.add.sprite(640, 3832, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
+      }
+
+      if(this.enfantAvecPlayer = true){
+        this.player = this.physics.add.sprite(640, 3832, 'enfantSuivi');
+        this.player.setCollideWorldBounds(true);
+        this.player.body.setGravityY(1600);
+      }
 
         this.pnj = this.physics.add.sprite(3964, 3584, 'pnj');
         this.pnj.setCollideWorldBounds(true);
@@ -118,10 +127,6 @@ export class Village extends Phaser.Scene {
         
         this.displayMagatamaImage();
 
-        // Mettre à jour la position de la zone de détection devant le joueur
-        //this.detectionZone.x = this.player.x + 64;
-        //this.detectionZone.y = this.player.y;
-
         // Collision avec le mur à gauche
         if (this.player.body.blocked.left || this.player.body.touching.left) {
             this.canClimb = true;
@@ -147,7 +152,7 @@ export class Village extends Phaser.Scene {
         }
 
             // Vérifie si l'action n'a pas encore été réalisée
-            if (!this.actionExecuted && this.player.x >= 1920) {
+            if (this.enfantAvecPlayer = false && !this.actionExecuted && this.player.x >= 1920) {
                 console.log("Voyage Voyage, plus loin que la nuit et le jour")
                 // Bloquer les mouvements du joueur
                 this.player.setVelocity(0);
@@ -165,40 +170,41 @@ export class Village extends Phaser.Scene {
 
          // Vérifier si le joueur est assez proche du PNJ
         const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.pnj.x, this.pnj.y);
-        if (distance < 300 && !this.text && this.currentLineIndex < this.dialogue.length) {
-        // Créer le texte au-dessus du PNJ
-        this.text = this.add.text(this.pnj.x, this.pnj.y - 200, this.dialogue[this.currentLineIndex], {
-            font: "24px Arial",
-            fill: "#ffffff",
-            backgroundColor: "#000000",
-            padding: { x: 10, y: 10 }
-        }).setOrigin(0.5);
+        if (this.enfantAvecPlayer = true){
+          if (distance < 300 && !this.text && this.currentLineIndex < this.dialogue.length) {
+          // Créer le texte au-dessus du PNJ
+          this.text = this.add.text(this.pnj.x, this.pnj.y - 200, this.dialogue[this.currentLineIndex], {
+              font: "24px Arial",
+              fill: "#ffffff",
+              backgroundColor: "#000000",
+              padding: { x: 10, y: 10 }
+          }).setOrigin(0.5);
 
-        // Créer l'animation pour faire disparaître le texte après 2 secondes
-        this.textTween = this.tweens.add({
-            targets: this.text,
-            alpha: 1,
-            duration: 5000,
-            onComplete: () => {
-            // Supprimer le texte et passer à la phrase suivante
-            this.text.destroy();
-            this.text = null;
-            this.currentLineIndex++;
+          // Créer l'animation pour faire disparaître le texte après 2 secondes
+          this.textTween = this.tweens.add({
+              targets: this.text,
+              alpha: 1,
+              duration: 5000,
+              onComplete: () => {
+              // Supprimer le texte et passer à la phrase suivante
+              this.text.destroy();
+              this.text = null;
+              this.currentLineIndex++;
 
-            // Réinitialiser l'animation pour la nouvelle phrase
-            if (this.currentLineIndex < this.dialogue.length) {
-                this.time.delayedCall(2000, () => {
-                this.update();
-                this.montrer = true;
-                });
-            }
-            }
-        });
-        if (this.montrer){
-            this.cinematic3();
-        }
-
-    };
+              // Réinitialiser l'animation pour la nouvelle phrase
+              if (this.currentLineIndex < this.dialogue.length) {
+                  this.time.delayedCall(2000, () => {
+                  this.update();
+                  this.montrer = true;
+                  });
+              }
+              }
+          });
+          if (this.montrer){
+              this.cinematic3();
+          }
+        };
+      };
 }
 
     displayMagatamaImage() {

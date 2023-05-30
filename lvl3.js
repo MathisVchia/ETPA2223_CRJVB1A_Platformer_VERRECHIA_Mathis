@@ -8,11 +8,14 @@ export class lvl3 extends Phaser.Scene {
         this.nombreMagatama = data.nombreMagatama;
         this.nombreSauvegarde = data.nombreSauvegarde;
         this.gainDash = data.gainDash;
+        this.enfantAvecPlayer = data.enfantAvecPlayer;
       }
 
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('enfantSuivi', 'assets/characters/enfantSuivi.png',
+        {frameWidth: 256, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('tireur', 'assets/characters/tireur.png',
@@ -63,14 +66,14 @@ export class lvl3 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        if(this.gainDash = false){
+        if(this.enfantAvecPlayer = false){
             this.player = this.physics.add.sprite(15848, 3448, 'nikko');
             this.player.setCollideWorldBounds(true);
             this.player.body.setGravityY(1600);
         }
 
-        if(this.gainDash = true){
-            this.player = this.physics.add.sprite(378, 2809, 'nikko');
+        if(this.enfantAvecPlayer = true){
+            this.player = this.physics.add.sprite(378, 2809, 'enfantSuivi');
             this.player.setCollideWorldBounds(true);
             this.player.body.setGravityY(1600);
         }
@@ -142,7 +145,7 @@ export class lvl3 extends Phaser.Scene {
         }
 
         // Dash (2eme Meca)
-        if(this.gainDash = true){
+        if(this.gainDash == true){
             if(this.dashButton.isDown){
                 this.dash();
             }
@@ -273,7 +276,9 @@ export class lvl3 extends Phaser.Scene {
         if (this.player.x < 200){
             this.scene.start("lvl4", {
                 nombreMagatama : this.nombreMagatama,
-                nombreSauvegarde : this.nombreSauvegarde
+                nombreSauvegarde : this.nombreSauvegarde,
+                gainDash : this.gainDash,
+                enfantAvecPlayer : this.enfantAvecPlayer
             });
         }
     }
@@ -418,13 +423,14 @@ export class lvl3 extends Phaser.Scene {
         this.scene.start("Village", {
             nombreMagatama : this.nombreMagatama,
             nombreSauvegarde : this.nombreSauvegarde,
-            gainDash : this.gainDash
+            gainDash : this.gainDash,
+            enfantAvecPlayer : this.enfantAvecPlayer
         });
     }
 
     dash() {
 
-        if (this.gainDash = true){
+        if (this.gainDash == true){
         
             // Calculate the target position based on the player's current position and direction
             let targetX;

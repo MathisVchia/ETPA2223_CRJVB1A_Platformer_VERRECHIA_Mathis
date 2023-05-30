@@ -53,6 +53,7 @@ export class lvl4 extends Phaser.Scene {
         this.actionExecuted = false;
         this.magatama = null;
         this.gainDash = false;
+        this.enfantAvecPlayer = false;
         
         this.map5 = this.add.tilemap('map5');
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
@@ -284,7 +285,8 @@ export class lvl4 extends Phaser.Scene {
             this.scene.start("lvl3", {
                 nombreMagatama : this.nombreMagatama,
                 nombreSauvegarde : this.nombreSauvegarde,
-                gainDash : this.gainDash
+                gainDash : this.gainDash,
+                enfantAvecPlayer : this.enfantAvecPlayer
             });
         
         }
@@ -427,7 +429,7 @@ export class lvl4 extends Phaser.Scene {
 
     dash() {
 
-        if (this.gainDash = true){
+        if (this.gainDash == true){
         
             // Calculate the target position based on the player's current position and direction
             let targetX;
@@ -459,13 +461,11 @@ export class lvl4 extends Phaser.Scene {
             });
         //};
       }
-
-    //changedLevelVillage(){
-        //this.scene.start("Village");
     }
 
     suivreEnfant() {
         this.player.setTexture('enfantSuivi');
+        this.enfantAvecPlayer = true;
     }
 }
 
