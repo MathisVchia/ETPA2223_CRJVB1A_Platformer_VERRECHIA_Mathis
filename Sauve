@@ -41,3 +41,7 @@ if (this.nombreMagatama == 4){
 if (this.nombreMagatama == 5){
     this.add.image(55, 105, '5_maga').setScale(1).setScrollFactor(0);
 }
+
+
+
+DASH CHANGER POUR AUGMENTER LA VELOCITE SUR AXE X PLUTOT QUE LA TP
