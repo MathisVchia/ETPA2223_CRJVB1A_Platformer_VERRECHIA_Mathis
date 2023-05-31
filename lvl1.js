@@ -215,7 +215,7 @@ export class lvl1 extends Phaser.Scene {
     
         // Effet de tremblement de l'écran
         const shakeDuration = 800; // Durée du tremblement (en millisecondes)
-        const shakeIntensity = 5; // Intensité du tremblement (en pixels)
+        const shakeIntensity = 0.004; // Intensité du tremblement (en pixels)
     
         this.cameras.main.shake(shakeDuration, shakeIntensity);
     }

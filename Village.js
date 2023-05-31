@@ -9,11 +9,14 @@ export class Village extends Phaser.Scene {
       this.nombreSauvegarde = data.nombreSauvegarde;
       this.gainDash = data.gainDash;
       this.enfantAvecPlayer = data.enfantAvecPlayer;
+      this.debutJeu = data.debutJeu;
     }
 
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('enfantSuivi', 'assets/characters/enfant.png',
+        {frameWidth : 256, frameHeight : 256});
         this.load.spritesheet('pnj', 'assets/characters/pnj.png',
         {frameWidth : 128, frameHeight : 256});
 
@@ -37,6 +40,7 @@ export class Village extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.montrer = false;
+        this.seekChild = false;
         
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
@@ -44,14 +48,20 @@ export class Village extends Phaser.Scene {
 
         this.plateformes3.setCollisionByProperty({estSolid: true});
 
-      if(this.enfantAvecPlayer = false){
         this.player = this.physics.add.sprite(640, 3832, 'nikko');
+        this.player.setCollideWorldBounds(true);
+        this.player.body.setGravityY(1600);
+
+      if(this.enfantAvecPlayer == true){
+        console.log("Les 2 Sprites en meme temps")
+        this.player = this.physics.add.sprite(640, 3832, 'enfantSuivi');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
       }
 
-      if(this.enfantAvecPlayer = true){
-        this.player = this.physics.add.sprite(640, 3832, 'enfantSuivi');
+      if(this.debutJeu == true){
+        console.log("Juste Nikko")
+        this.player = this.physics.add.sprite(640, 3832, 'Nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
       }
@@ -152,7 +162,7 @@ export class Village extends Phaser.Scene {
         }
 
             // Vérifie si l'action n'a pas encore été réalisée
-            if (this.enfantAvecPlayer = false && !this.actionExecuted && this.player.x >= 1920) {
+            if (this.enfantAvecPlayer == false && !this.actionExecuted && this.player.x >= 1920) {
                 console.log("Voyage Voyage, plus loin que la nuit et le jour")
                 // Bloquer les mouvements du joueur
                 this.player.setVelocity(0);
@@ -170,7 +180,9 @@ export class Village extends Phaser.Scene {
 
          // Vérifier si le joueur est assez proche du PNJ
         const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.pnj.x, this.pnj.y);
-        if (this.enfantAvecPlayer = true){
+        this.seekChild = true;
+        console.log("Va chercher l'enfant")
+        if (this.debutJeu == true){
           if (distance < 300 && !this.text && this.currentLineIndex < this.dialogue.length) {
           // Créer le texte au-dessus du PNJ
           this.text = this.add.text(this.pnj.x, this.pnj.y - 200, this.dialogue[this.currentLineIndex], {
@@ -354,7 +366,8 @@ export class Village extends Phaser.Scene {
        bouton2.on("pointerdown", () => {
           this.scene.start("lvl3", {
             nombreMagatama : this.nombreMagatama,
-            nombreSauvegarde : this.nombreSauvegarde
+            nombreSauvegarde : this.nombreSauvegarde,
+            seekChild : this.seekChild
         });
        });
 

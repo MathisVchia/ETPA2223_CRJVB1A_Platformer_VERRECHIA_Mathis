@@ -45,6 +45,7 @@ export class lvl2 extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.doubleJumpAvailable = false;
+        this.debutJeu = false;
 
         this.nombreMagatama = 0;
         this.nombreSauvegarde = 0;
@@ -211,6 +212,7 @@ export class lvl2 extends Phaser.Scene {
                 console.log(this.nombreMagatama);
                 this.nombreSauvegarde++;
                 this.displayMagatamaImage();
+                this.debutJeu = true;
 
                 const text = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Texte à afficher", {
                     font: "24px Arial",
@@ -483,7 +485,8 @@ export class lvl2 extends Phaser.Scene {
     changedLevelVillage(){
         this.scene.start("Village", {
             nombreMagatama : this.nombreMagatama,
-            nombreSauvegarde : this.nombreSauvegarde
+            nombreSauvegarde : this.nombreSauvegarde,
+            debutJeu : this.debutJeu
         });
     }
 

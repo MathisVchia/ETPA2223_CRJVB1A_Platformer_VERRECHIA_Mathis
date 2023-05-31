@@ -7,6 +7,7 @@ export class lvl4 extends Phaser.Scene {
     init(data) {
         this.nombreMagatama = data.nombreMagatama;
         this.nombreSauvegarde = data.nombreSauvegarde;
+        this.seekChild = data.seekChild;
       }
 
     preload() {
@@ -66,8 +67,7 @@ export class lvl4 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        //this.player = this.physics.add.sprite(15612, 2366, 'nikko');
-        this.player = this.physics.add.sprite(800, 3454, 'nikko');
+        this.player = this.physics.add.sprite(15612, 2366, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
 
@@ -85,10 +85,10 @@ export class lvl4 extends Phaser.Scene {
         this.sauvegarde2.setCollideWorldBounds(true);
         this.sauvegarde2.body.setImmovable(true);
 
-        /*this.sauvegarde = this.physics.add.sprite(1792, 4344, 'sauvegarde');
+        this.sauvegarde = this.physics.add.sprite(1792, 4344, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
-*/
+
         this.magatamaImages = [];
         this.displayMagatamaImage();
 
@@ -154,6 +154,7 @@ export class lvl4 extends Phaser.Scene {
         //Vérifie si le joueur est proche de 'lenfant et si le bouton d'interaction a été pressé
         const distanceToEnfant = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enfant.x, this.enfant.y);
         if (distanceToEnfant < 150 && this.interactButton.isDown){
+            this.enfant.destroy();
             this.gainDash = true;
             this.suivreEnfant();
         }
@@ -459,8 +460,7 @@ export class lvl4 extends Phaser.Scene {
                 this.player.enableBody(true, this.player.x, this.player.y);
             }
             });
-        //};
-      }
+        }
     }
 
     suivreEnfant() {

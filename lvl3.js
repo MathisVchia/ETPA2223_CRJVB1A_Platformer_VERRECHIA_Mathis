@@ -9,6 +9,7 @@ export class lvl3 extends Phaser.Scene {
         this.nombreSauvegarde = data.nombreSauvegarde;
         this.gainDash = data.gainDash;
         this.enfantAvecPlayer = data.enfantAvecPlayer;
+        this.seekChild = data.seekChild;
       }
 
     preload() {
@@ -66,13 +67,13 @@ export class lvl3 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        if(this.enfantAvecPlayer = false){
+        if(this.seekChild == true){
             this.player = this.physics.add.sprite(15848, 3448, 'nikko');
             this.player.setCollideWorldBounds(true);
             this.player.body.setGravityY(1600);
         }
 
-        if(this.enfantAvecPlayer = true){
+        if(this.enfantAvecPlayer == true){
             this.player = this.physics.add.sprite(378, 2809, 'enfantSuivi');
             this.player.setCollideWorldBounds(true);
             this.player.body.setGravityY(1600);
@@ -88,7 +89,7 @@ export class lvl3 extends Phaser.Scene {
         this.magatamaImages = [];
         this.displayMagatamaImage();
 
-        this.physics.add.collider(this.player, this.plateformes4);;
+        this.physics.add.collider(this.player, this.plateformes4);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         // résolution de l'écran
@@ -278,7 +279,8 @@ export class lvl3 extends Phaser.Scene {
                 nombreMagatama : this.nombreMagatama,
                 nombreSauvegarde : this.nombreSauvegarde,
                 gainDash : this.gainDash,
-                enfantAvecPlayer : this.enfantAvecPlayer
+                enfantAvecPlayer : this.enfantAvecPlayer,
+                seekChild : this.seekChild
             });
         }
     }
