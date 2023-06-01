@@ -131,9 +131,9 @@ export class lvl3 extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-460);
+            this.player.setVelocityX(-400);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(460);
+            this.player.setVelocityX(400);
         } else {
             this.player.setVelocityX(0);
         }

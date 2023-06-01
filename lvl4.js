@@ -55,6 +55,7 @@ export class lvl4 extends Phaser.Scene {
         this.magatama = null;
         this.gainDash = false;
         this.enfantAvecPlayer = false;
+        this.sautUse = false;
         
         this.map5 = this.add.tilemap('map5');
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
@@ -85,9 +86,9 @@ export class lvl4 extends Phaser.Scene {
         this.sauvegarde2.setCollideWorldBounds(true);
         this.sauvegarde2.body.setImmovable(true);
 
-        this.sauvegarde = this.physics.add.sprite(1792, 4344, 'sauvegarde');
-        this.sauvegarde.setCollideWorldBounds(true);
-        this.sauvegarde.body.setImmovable(true);
+        this.sauvegarde3 = this.physics.add.sprite(1792, 4344, 'sauvegarde');
+        this.sauvegarde3.setCollideWorldBounds(true);
+        this.sauvegarde3.body.setImmovable(true);
         
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
 
@@ -131,9 +132,9 @@ export class lvl4 extends Phaser.Scene {
         console.log("le nombre de magatama :", this.nombreMagatama, "et le nombre sauvegarde", this.nombreSauvegarde);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-460);
+            this.player.setVelocityX(-400);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(460);
+            this.player.setVelocityX(400);
         } else {
             this.player.setVelocityX(0);
         }
@@ -141,7 +142,7 @@ export class lvl4 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-1675);
+            this.player.setVelocityY(-675);
         }
 
         // Dash (2eme Meca)
@@ -222,6 +223,11 @@ export class lvl4 extends Phaser.Scene {
             this.recupSave();
         });
 
+        this.physics.add.overlap(this.player, this.sauvegarde3, () => {
+            console.log("save")
+            this.recupSave();
+        });
+
             // Ajout collision joueur sanctuaire
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
             if (this.renardIsFollowing) {
@@ -231,7 +237,6 @@ export class lvl4 extends Phaser.Scene {
                 this.nombreMagatama++;
                 console.log(this.nombreMagatama);
                 this.nombreSauvegarde++;
-                this.displayMagatamaImage();
 
               // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
             function getRandomPositionAroundSanctuaire() {
@@ -274,7 +279,7 @@ export class lvl4 extends Phaser.Scene {
 
         console.log (this.doubleSautAutorise)
         if (this.nombreMagatama > 0){
-                this.displayMagatamaImage();
+                this.sautUse = true;
                 this.gainSaut()
         };
 
@@ -419,10 +424,13 @@ export class lvl4 extends Phaser.Scene {
       if ((this.nombreMagatama > 0) && !this.player.body.blocked.down) {
           // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
           if (this.cursors.space.isDown) {
-            console.log("Saut effectué.");
-            // Appliquer une vélocité vers le haut pour le double saut
-            this.player.setVelocityY(-725);
-            this.nombreMagatama--;
+            if (this.sautUse == true){
+                console.log("Saut effectué.");
+                // Appliquer une vélocité vers le haut pour le double saut
+                this.player.setVelocityY(-725);
+                this.nombreMagatama--;
+                this.sautUse = false;
+            }
               
         } else {
           console.log("Double saut déjà utilisé ou le joueur est au sol.");
