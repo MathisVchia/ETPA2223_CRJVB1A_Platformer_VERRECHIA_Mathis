@@ -74,9 +74,6 @@ export class Village extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plateformes3);
         this.physics.add.collider(this.pnj, this.plateformes3);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
-
-        this.magatamaImages = [];
-        this.displayMagatamaImage();
         
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
@@ -134,8 +131,6 @@ export class Village extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
-        
-        this.displayMagatamaImage();
 
         // Collision avec le mur à gauche
         if (this.player.body.blocked.left || this.player.body.touching.left) {
@@ -217,22 +212,7 @@ export class Village extends Phaser.Scene {
           }
         };
       };
-}
-
-    displayMagatamaImage() {
-      // Supprime les images de magatama existantes
-      this.magatamaImages?.forEach((image) => image.destroy());
-      this.magatamaImages = [];
-
-      // Affiche l'image correspondante à nombreMagatama
-      for (let i = 0; i < this.nombreMagatama; i++) {
-          const magatamaImage = this.add
-              .image(55 + i * 32, 105, `${i + 1}_maga`)
-              .setScale(1)
-              .setScrollFactor(0);
-          this.magatamaImages.push(magatamaImage);
-      }
-    }      
+}   
 
     gainSaut() {
           // Vérifier si le double saut est activé

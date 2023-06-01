@@ -88,9 +88,8 @@ export class lvl4 extends Phaser.Scene {
         this.sauvegarde = this.physics.add.sprite(1792, 4344, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
-
-        this.magatamaImages = [];
-        this.displayMagatamaImage();
+        
+        this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
 
         this.physics.add.collider(this.player, this.plateformes5);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
@@ -150,6 +149,27 @@ export class lvl4 extends Phaser.Scene {
             this.dash();
             
         }
+
+         //Ajouter les images
+         if (this.nombreMagatama == 0){
+            this.magatamaImages.setTexture("0_maga");
+        }
+        if (this.nombreMagatama == 1){
+            this.magatamaImages.setTexture("1_maga");
+        }
+        if (this.nombreMagatama == 2){
+            this.magatamaImages.setTexture("2_maga");
+        }
+        if (this.nombreMagatama == 3){
+            this.magatamaImages.setTexture("3_maga");
+        }
+        if (this.nombreMagatama == 4){
+            this.magatamaImages.setTexture("4_maga");
+        }
+        if (this.nombreMagatama == 5){
+            this.magatamaImages.setTexture("5_maga");
+        }
+
 
         //Vérifie si le joueur est proche de 'lenfant et si le bouton d'interaction a été pressé
         const distanceToEnfant = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enfant.x, this.enfant.y);
@@ -290,20 +310,6 @@ export class lvl4 extends Phaser.Scene {
                 enfantAvecPlayer : this.enfantAvecPlayer
             });
         
-        }
-    }
-    displayMagatamaImage() {
-        // Supprime les images de magatama existantes
-        this.magatamaImages?.forEach((image) => image.destroy());
-        this.magatamaImages = [];
-
-        // Affiche l'image correspondante à nombreMagatama
-        for (let i = 0; i < this.nombreMagatama; i++) {
-            const magatamaImage = this.add
-                .image(55 + i * 32, 105, `${i + 1}_maga`)
-                .setScale(1)
-                .setScrollFactor(0);
-            this.magatamaImages.push(magatamaImage);
         }
     }
 

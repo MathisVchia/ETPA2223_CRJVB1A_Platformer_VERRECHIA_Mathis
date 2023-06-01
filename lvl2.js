@@ -6,15 +6,15 @@ export class lvl2 extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png',
-        {frameWidth : 128, frameHeight : 256});
+            { frameWidth: 128, frameHeight: 256 });
         this.load.spritesheet('renard', 'assets/characters/renard.png',
-        {frameWidth: 128, frameHeight : 128});
+            { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('clef', 'assets/objects/clef.png',
-        {frameWidth: 128, frameHeight : 128});
+            { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('porte', 'assets/objects/porte.png',
-        {frameWidth: 128, frameHeight : 128});
+            { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
-        {frameWidth: 128, frameHeight : 128});
+            { frameWidth: 128, frameHeight: 128 });
         //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
         //{frameWidth: 128, frameHeight : 128});
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
@@ -53,9 +53,9 @@ export class lvl2 extends Phaser.Scene {
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
-        this.ennemi = this.map2.createLayer ('ennemi', this.tileset);
+        this.ennemi = this.map2.createLayer('ennemi', this.tileset);
 
-        this.plateformes2.setCollisionByProperty({estSolid: true});
+        this.plateformes2.setCollisionByProperty({ estSolid: true });
 
         this.player = this.physics.add.sprite(112, 2544, 'nikko');
         this.player.setCollideWorldBounds(true);
@@ -80,8 +80,7 @@ export class lvl2 extends Phaser.Scene {
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
 
-        this.magatamaImages = [];
-        this.displayMagatamaImage();
+        this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
 
         this.physics.add.collider(this.player, this.plateformes2);
         this.physics.add.collider(this.clef, this.plateformes2);
@@ -95,10 +94,10 @@ export class lvl2 extends Phaser.Scene {
 
         // création de la caméra
         // taille de la caméra
-        this.cameras.main.setSize(1920,1080);
+        this.cameras.main.setSize(1920, 1080);
         // faire en sorte que la caméra suive le personnage et qu'elle ne sorte pas de l'écran
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.setDeadzone(100,100);
+        this.cameras.main.setDeadzone(100, 100);
         //this.cameras.main.setBounds(0,0,4160,3456);
 
         this.physics.add.overlap(this.player, this.renard, this.recrute.bind(this));
@@ -117,26 +116,48 @@ export class lvl2 extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
+        console.log(this.magatama);
     }
 
     update() {
-
         const isPlayerTouchingDoor = this.physics.overlap(this.player, this.door);
-        
+
+       // console.log(this.nombreMagatama);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-460);
+            this.player.setVelocityX(-2460);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(460);
+            this.player.setVelocityX(2460);
         } else {
             this.player.setVelocityX(0);
         }
-    
+
         // Saut
-        if (this.cursorsUp.isDown && this.player.body.blocked.down){
+        if (this.cursorsUp.isDown && this.player.body.blocked.down) {
             console.log("SAUTE")
-            this.player.setVelocityY(-675);
+            this.player.setVelocityY(-1675);
         }
+
+        //Ajouter les images
+        if (this.nombreMagatama == 0){
+            this.magatamaImages.setTexture("0_maga");
+        }
+        if (this.nombreMagatama == 1){
+            this.magatamaImages.setTexture("1_maga");
+        }
+        if (this.nombreMagatama == 2){
+            this.magatamaImages.setTexture("2_maga");
+        }
+        if (this.nombreMagatama == 3){
+            this.magatamaImages.setTexture("3_maga");
+        }
+        if (this.nombreMagatama == 4){
+            this.magatamaImages.setTexture("4_maga");
+        }
+        if (this.nombreMagatama == 5){
+            this.magatamaImages.setTexture("5_maga");
+        }
+        
 
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
         const distanceToRenard = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.renard.x, this.renard.y);
@@ -144,53 +165,53 @@ export class lvl2 extends Phaser.Scene {
             this.recruterRenard();
             this.renardIsFollowing = true;
         }
-    
+
         // Si le renard suit déjà le joueur, met à jour sa position pour qu'il reste derrière le joueur
         if (this.renardIsFollowing) {
             const targetX = this.player.x - 150;
             const targetY = this.player.y - 128;
-    
+
             const deltaX = targetX - this.renard.x;
             const deltaY = targetY - this.renard.y;
-    
+
             const speed = 240;
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
+
             if (distance > 1) {
                 const moveX = (deltaX / distance) * speed;
                 const moveY = (deltaY / distance) * speed;
-    
+
                 this.renard.setVelocity(moveX, moveY);
             } else {
                 this.renard.setVelocity(0, 0);
             }
         }
-    
+
         // Ajoute un événement de clic pour donner l'ordre au renard de se rendre à un endroit précis avec la souris
         this.input.on('pointerdown', this.donnerOrdreRenard, this);
         //console.log(this.renard.y);
 
-         // Ajout de la collision entre le renard et la clef
-         this.physics.add.overlap(this.renard, this.clef, () => {
+        // Ajout de la collision entre le renard et la clef
+        this.physics.add.overlap(this.renard, this.clef, () => {
             console.log("ddjs")
             this.collectKey();
         });
 
         // Ajout collision entre joueur et la porte
-        this.physics.add.collider(this.player, this.porte, () =>{
-            if (this.hasKey === true){
-                console.log ("TU TOUCHE")
+        this.physics.add.collider(this.player, this.porte, () => {
+            if (this.hasKey === true) {
+                console.log("TU TOUCHE")
                 this.openDoor();
             };
             if (this.hasKey === false) {
                 const delay = 3000; // Temps d'affichage en millisecondes
-            
+
                 const text = this.add.text(800, 3916, "Vous avez besoin d'une clé pour ouvrir la porte.", {
                     font: "24px Arial",
                     fill: "#ffffff"
                 });
                 text.setOrigin(0.5);
-            
+
                 this.time.delayedCall(delay, () => {
                     text.destroy(); // Supprime le texte après le délai spécifié
                 });
@@ -202,7 +223,7 @@ export class lvl2 extends Phaser.Scene {
             this.recupSave();
         });
 
-            // Ajout collision joueur sanctuaire
+        // Ajout collision joueur sanctuaire
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
             if (this.renardIsFollowing) {
                 // Détruit le renard actuel
@@ -211,7 +232,6 @@ export class lvl2 extends Phaser.Scene {
                 this.nombreMagatama++;
                 console.log(this.nombreMagatama);
                 this.nombreSauvegarde++;
-                this.displayMagatamaImage();
                 this.debutJeu = true;
 
                 const text = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Texte à afficher", {
@@ -219,54 +239,54 @@ export class lvl2 extends Phaser.Scene {
                     fill: "#ffffff"
                 });
                 text.setOrigin(0.5);
-                
+
                 this.time.delayedCall(5000, () => {
                     text.destroy(); // Supprime le texte après 5 secondes
                 });
 
-              // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
-            function getRandomPositionAroundSanctuaire() {
-                const offsetX = Phaser.Math.Between(-100, 100); // Offset horizontal aléatoire
-                const offsetY = Phaser.Math.Between(-100, 100); // Offset vertical aléatoire
-                const renardX = this.sanctuaire.x + offsetX;
-                const renardY = this.sanctuaire.y + offsetY;
-                return { x: renardX, y: renardY };
-            }
-            
-            // Recrée le renard à une position aléatoire autour du sanctuaire
-            const initialPosition = getRandomPositionAroundSanctuaire.call(this);
-            this.renard = this.physics.add.sprite(initialPosition.x, initialPosition.y, 'renard');
-            
-            // Active les mouvements du renard pour qu'il flotte autour du sanctuaire
-            this.renardIsFollowing = true;
-            this.physics.add.collider(this.renard, this.sanctuaire, this.handleRenardSanctuaireCollision, null, this);
-            
-            // Crée un tween pour le mouvement fluide et aléatoire du renard
-            this.renardTween = this.tweens.add({
-                targets: this.renard,
-                x: () => {
-                const position = getRandomPositionAroundSanctuaire.call(this);
-                return position.x;
-                },
-                y: () => {
-                const position = getRandomPositionAroundSanctuaire.call(this);
-                return position.y;
-                },
-                ease: 'Sine.easeInOut',
-                duration: 2000, // Durée de l'animation en millisecondes
-                yoyo: true,
-                repeat: -1 // Répétition infinie
-            });
+
+                // Ajoutez une fonction pour générer une position aléatoire autour du sanctuaire
+                function getRandomPositionAroundSanctuaire() {
+                    const offsetX = Phaser.Math.Between(-100, 100); // Offset horizontal aléatoire
+                    const offsetY = Phaser.Math.Between(-100, 100); // Offset vertical aléatoire
+                    const renardX = this.sanctuaire.x + offsetX;
+                    const renardY = this.sanctuaire.y + offsetY;
+                    return { x: renardX, y: renardY };
+                }
+
+                // Recrée le renard à une position aléatoire autour du sanctuaire
+                const initialPosition = getRandomPositionAroundSanctuaire.call(this);
+                this.renard = this.physics.add.sprite(initialPosition.x, initialPosition.y, 'renard');
+
+                // Active les mouvements du renard pour qu'il flotte autour du sanctuaire
+                this.renardIsFollowing = true;
+                this.physics.add.collider(this.renard, this.sanctuaire, this.handleRenardSanctuaireCollision, null, this);
+
+                // Crée un tween pour le mouvement fluide et aléatoire du renard
+                this.renardTween = this.tweens.add({
+                    targets: this.renard,
+                    x: () => {
+                        const position = getRandomPositionAroundSanctuaire.call(this);
+                        return position.x;
+                    },
+                    y: () => {
+                        const position = getRandomPositionAroundSanctuaire.call(this);
+                        return position.y;
+                    },
+                    ease: 'Sine.easeInOut',
+                    duration: 2000, // Durée de l'animation en millisecondes
+                    yoyo: true,
+                    repeat: -1 // Répétition infinie
+                });
 
                 // Réinitialise la variable renardIsFollowing
-                this.renardIsFollowing = false;                
+                this.renardIsFollowing = false;
             }
         });
 
-        console.log (this.doubleSautAutorise)
-        if (this.nombreMagatama > 0){
-                this.displayMagatamaImage();
-                this.gainSaut()
+        //console.log(this.doubleSautAutorise)
+        if (this.nombreMagatama > 0) {
+            this.gainSaut()
         };
 
 
@@ -285,7 +305,7 @@ export class lvl2 extends Phaser.Scene {
             if (this.cursorsUp.isDown && !this.dbSaut) {
                 // Définir la vitesse de montée
                 this.player.setVelocityY(-700);
-        
+
                 // Désactiver la possibilité de sauter à nouveau pendant 1 seconde
                 this.dbSaut = true;
                 this.time.delayedCall(1000, () => {
@@ -294,36 +314,21 @@ export class lvl2 extends Phaser.Scene {
             }
         }
 
-            // Vérifie si l'action n'a pas encore été réalisée
-            if (!this.actionExecuted && this.player.x >= 2742) {
-                this.cinematic1()
+        // Vérifie si l'action n'a pas encore été réalisée
+        if (!this.actionExecuted && this.player.x >= 2742) {
+            this.cinematic1()
 
-            };
+        };
 
-        if ( this.player.x > 16930){
+        if (this.player.x > 16930) {
             this.changedLevelVillage();
         }
     }
 
-    displayMagatamaImage() {
-        // Supprime les images de magatama existantes
-        this.magatamaImages?.forEach((image) => image.destroy());
-        this.magatamaImages = [];
-
-        // Affiche l'image correspondante à nombreMagatama
-        for (let i = 0; i < this.nombreMagatama; i++) {
-            const magatamaImage = this.add
-                .image(55 + i * 32, 105, `${i + 1}_maga`)
-                .setScale(1)
-                .setScrollFactor(0);
-            this.magatamaImages.push(magatamaImage);
-        }
-    }
-
     recruterRenard() {
-        
-            // Le reste du code de la fonction...
-        
+
+        // Le reste du code de la fonction...
+
         // Vérifie si un renard existe déjà
         this.nombreRenardsLivrés++;
         if (this.renard) {
@@ -331,17 +336,17 @@ export class lvl2 extends Phaser.Scene {
             this.renard.destroy();
             console.log("CHELOU TOUT CA")
         }
-    
+
         // Crée un nouveau sprite de renard derrière le joueur
         this.renard = this.physics.add.sprite(this.player.x - 150, this.player.y - 128, 'renard');
         //this.physics.add.collider(this.renard, this.plateformes);
         this.renard.body.setAllowGravity(false);
 
-  
+
         // Ajoute un comportement de suivi du joueur
         this.renard.body.setCollideWorldBounds(true);
         this.renard.setBounce(0.2);
-    
+
         // Met à jour la position du renard à chaque frame pour qu'il reste derrière le joueur
         this.update = () => {
             const targetX = this.player.x - 150;
@@ -359,7 +364,7 @@ export class lvl2 extends Phaser.Scene {
 
                 this.renard.setVelocity(moveX, moveY);
             } else {
-                if (this.player.velocity == 0){
+                if (this.player.velocity == 0) {
                     this.renard.setVelocity(0, 0);
                     console.log("OK")
                 };
@@ -372,41 +377,41 @@ export class lvl2 extends Phaser.Scene {
             // Arrête le renard et désactive le suivi du joueur
             this.renardIsFollowing = false;
             this.renard.setVelocity(0, 0);
-            this.physics.moveTo(this.renard,pointer.worldX,pointer.worldY,200);
+            this.physics.moveTo(this.renard, pointer.worldX, pointer.worldY, 200);
             this.zoneA = pointer.worldX;
             this.zoneB = pointer.worldY;
 
-             // Vérifie si le renard a atteint les coordonnées du pointer
-        this.time.addEvent({
-            delay: 100,
-            callback: () => {
-                const distanceToPointer = Phaser.Math.Distance.Between(this.renard.x, this.renard.y, this.zoneA, this.zoneB);
-                if (distanceToPointer < 10) {
-                    // Arrête le renard
-                    this.renard.setVelocity(0, 0);
-                    this.renardIsFollowing = true;
-                    this.physics.moveTo(this.renard, this.player.x - 150, this.player.y - 128, 200);
-                }
-            },
-            loop: true
-        });
+            // Vérifie si le renard a atteint les coordonnées du pointer
+            this.time.addEvent({
+                delay: 100,
+                callback: () => {
+                    const distanceToPointer = Phaser.Math.Distance.Between(this.renard.x, this.renard.y, this.zoneA, this.zoneB);
+                    if (distanceToPointer < 10) {
+                        // Arrête le renard
+                        this.renard.setVelocity(0, 0);
+                        this.renardIsFollowing = true;
+                        this.physics.moveTo(this.renard, this.player.x - 150, this.player.y - 128, 200);
+                    }
+                },
+                loop: true
+            });
 
-        if (this.interactButton.isDown) {
-            this.recrute();
-            console.log("recrute")
+            if (this.interactButton.isDown) {
+                this.recrute();
+                console.log("recrute")
+            }
+
+            if (this.renard.followingPlayer) {
+                this.renard.body.velocity.x = this.player.body.velocity.x;
+                this.renard.body.velocity.y = this.player.body.velocity.y;
+            }
+
         }
-
-        if (this.renard.followingPlayer) {
-            this.renard.body.velocity.x = this.player.body.velocity.x;
-            this.renard.body.velocity.y = this.player.body.velocity.y;
-          }
-
     }
-}
 
 
     recrute() {
-        const distance = Phaser.Math.Between(this.player.x,this.renard.x);
+        const distance = Phaser.Math.Between(this.player.x, this.renard.x);
         console.log(distance)
 
         if (distance < 44000) {
@@ -417,54 +422,55 @@ export class lvl2 extends Phaser.Scene {
     collectKey() {
         // Détecter la collision entre le renard et la clef
         this.physics.add.overlap(this.renard, this.clef, () => {
-          // Faire disparaître la clef
-          this.clef.destroy();
-      
-          // Stocker la clef dans l'inventaire
-          this.hasKey = true;
-          console.log("TU AS LA CLEF");
+            // Faire disparaître la clef
+            this.clef.destroy();
+
+            // Stocker la clef dans l'inventaire
+            this.hasKey = true;
+            console.log("TU AS LA CLEF");
         });
-      }
+    }
 
     openDoor() {
-    //Détecter si le joueur possède la clef
-    console.log("SESAME OUVRE TOI")
-    this.porte.destroy();
-    this.hasKey = false;
+        //Détecter si le joueur possède la clef
+        console.log("SESAME OUVRE TOI")
+        this.porte.destroy();
+        this.hasKey = false;
     }
 
     recommencerNiveau() {
         // Si le renard suit encore le joueur, le faire disparaitre
         if (this.renardIsFollowing) {
-          this.renardIsFollowing = false;
-          this.renard.disableBody(true, true);
+            this.renardIsFollowing = false;
+            this.renard.disableBody(true, true);
         }
-        
+
         // Recommencer le niveau "lvl1"
         this.scene.start("lvl2");
-      }
-      
+    }
+
 
     gainSaut() {
-          // Vérifier si le double saut est activé
+        // Vérifier si le double saut est activé
         if ((this.nombreMagatama > 0) && !this.player.body.blocked.down) {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
             if (this.cursors.space.isDown) {
-              console.log("Saut effectué.");
-              // Appliquer une vélocité vers le haut pour le double saut
-              this.player.setVelocityY(-725);
-              this.nombreMagatama--;
-                
-          } else {
-            console.log("Double saut déjà utilisé ou le joueur est au sol.");
-          }
+                //console.log("Saut effectué.");
+                // Appliquer une vélocité vers le haut pour le double saut
+                console.log("POUFPIF")
+                this.player.setVelocityY(-725);
+                this.nombreMagatama--;
+
+            } else {
+                //console.log("Double saut déjà utilisé ou le joueur est au sol.");
+            }
         }
-    } 
+    }
     cinematic1() {
 
         // Bloque les mouvements du joueur
         this.player.setImmovable(true);
-    
+
         // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
         this.cameras.main.pan(4800, 3530, 3000, 'Sine.easeInOut', false, () => {
             // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
@@ -482,15 +488,15 @@ export class lvl2 extends Phaser.Scene {
         });
     }
 
-    changedLevelVillage(){
+    changedLevelVillage() {
         this.scene.start("Village", {
-            nombreMagatama : this.nombreMagatama,
-            nombreSauvegarde : this.nombreSauvegarde,
-            debutJeu : this.debutJeu
+            nombreMagatama: this.nombreMagatama,
+            nombreSauvegarde: this.nombreSauvegarde,
+            debutJeu: this.debutJeu
         });
     }
 
-    recupSave(){
+    recupSave() {
         this.nombreMagatama = this.nombreSauvegarde;
     }
 }
