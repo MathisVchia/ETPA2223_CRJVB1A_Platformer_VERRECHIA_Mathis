@@ -112,10 +112,11 @@ export class lvl2 extends Phaser.Scene {
         //this.cursors = this.input.keyboard.createCursorKeys();
 
         this.cursorsUp = this.input.keyboard.addKey('Z');
-        this.cursorsLeft = this.input.keyboard.addKey('Q')
-        this.cursorsRight = this.input.keyboard.addKey('D')
-        this.cursorsDown = this.input.keyboard.addKey('S')
+        this.cursorsLeft = this.input.keyboard.addKey('Q');
+        this.cursorsRight = this.input.keyboard.addKey('D');
+        this.cursorsDown = this.input.keyboard.addKey('S');
         this.interactButton = this.input.keyboard.addKey('E');
+        this.SPACE = this.input.keyboard.addKey('SPACE');
         console.log(this.magatama);
     }
 
@@ -454,7 +455,7 @@ export class lvl2 extends Phaser.Scene {
         // Vérifier si le double saut est activé
         if ((this.nombreMagatama > 0) && !this.player.body.blocked.down) {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
-            if (this.cursors.space.isDown) {
+            if (Phaser.Input.Keyboard.JustDown(this.SPACE)) {
                 //console.log("Saut effectué.");
                 // Appliquer une vélocité vers le haut pour le double saut
                 console.log("POUFPIF")

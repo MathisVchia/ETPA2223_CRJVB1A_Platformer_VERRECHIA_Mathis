@@ -99,6 +99,7 @@ export class Village extends Phaser.Scene {
         this.cursorsRight = this.input.keyboard.addKey('D')
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
+        this.SPACE = this.input.keyboard.addKey('SPACE');
 
          // Créer les variables pour gérer les phrases du dialogue
         this.dialogue = [
@@ -218,7 +219,7 @@ export class Village extends Phaser.Scene {
           // Vérifier si le double saut est activé
           if (this.doubleSautAutorise && !this.player.body.blocked.down) {
             // Vérifier si le joueur n'est pas en train de toucher le sol et la touche "cursors.up" est enfoncée
-            if (this.cursors.space.isDown) {
+            if (Phaser.Input.Keyboard.JustDown(this.SPACE)) {
               console.log("Saut effectué.");
       
               // Appliquer une vélocité vers le haut pour le double saut
