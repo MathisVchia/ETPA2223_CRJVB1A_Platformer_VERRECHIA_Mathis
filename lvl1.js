@@ -62,7 +62,6 @@ export class lvl1 extends Phaser.Scene {
              this.player.body.moves = true;
          }, [], this);
 
-
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
@@ -102,9 +101,11 @@ export class lvl1 extends Phaser.Scene {
          if (this.canMove) {
             // Gérez les mouvements du joueur
             if (this.cursorsLeft.isDown) {
-                this.player.setVelocityX(-460);
+                this.player.setVelocityX(-400);
+
             } else if (this.cursorsRight.isDown) {
-                this.player.setVelocityX(460);
+                this.player.setVelocityX(400);
+
             } else {
                 this.player.setVelocityX(0);
             }
@@ -114,6 +115,8 @@ export class lvl1 extends Phaser.Scene {
             console.log("SAUTE")
             this.player.setVelocityY(-675);
         }
+
+    }
 
          // Collision avec le mur à gauche
          if (this.player.body.blocked.left || this.player.body.touching.left) {
@@ -147,26 +150,40 @@ export class lvl1 extends Phaser.Scene {
         }
 
         //Petit effet zoom bien sympathique
-        if (this.player.x > 4988 && this.player.x < 7040 || this.player.x > 17533) {
+        if (this.player.x > 4988 && this.player.x < 7040) {
             const startZoomX = 4988;
             const endZoomX = 7040;
             const startZoomValue = 1;
             const endZoomValue = 0.75;
-    
+        
             const zoomPercentage = (this.player.x - startZoomX) / (endZoomX - startZoomX);
             const zoomValue = startZoomValue + (endZoomValue - startZoomValue) * zoomPercentage;
-    
+        
             this.cameras.main.setZoom(zoomValue);
-            } else {
-                this.cameras.main.setZoom(1); // Reset zoom to default value
-            }
+        } else if (this.player.x >= 7040 && this.player.x < 17533) {
+            this.cameras.main.setZoom(1); // Zoom fixe à 0.75 entre 7040 et 17533
+        } else if (this.player.x >= 17533) {
+            const startZoomX = 17533;
+            const endZoomX = 22800;
+            const startZoomValue = 1;
+            const endZoomValue = 0.75;
+        
+            const zoomPercentage = (this.player.x - startZoomX) / (endZoomX - startZoomX);
+            const zoomValue = startZoomValue + (endZoomValue - startZoomValue) * zoomPercentage;
+        
+            this.cameras.main.setZoom(zoomValue);
+        } else {
+            this.cameras.main.setZoom(1); // Réinitialise le zoom à la valeur par défaut
         }
+
 
         if (this.cinematicText) {
             this.cinematicText.setPosition(this.player.x, this.player.y - 178);
         }
-
+        
     }
+
+    
 
     changedLevel(){
         this.scene.start("lvl2");
@@ -188,36 +205,58 @@ export class lvl1 extends Phaser.Scene {
     }
 
     displayCinematicText() {
-        // Création du texte
-        this.cinematicText = this.add.text(this.player.x, this.player.y - 528, "Qu'est ce que... ?", {
-            fontSize: "24px",
-            fontFamily: "Arial",
-            color: "#ffffff",
-            backgroundColor: "#000000",
-            padding: {
-                x: 16,
-                y: 8
+        const phrases = [
+            "Qu'est-ce que...",
+            "Prêtre Asuma ? Il y a quelqu'un ?",
+            "Je dois aller voir ce qu'il se passe..."
+        ];
+    
+        let phraseIndex = 0;
+    
+        const displayNextPhrase = () => {
+            if (phraseIndex >= phrases.length) {
+                // Toutes les phrases ont été affichées, terminer la fonction
+                return;
             }
-        }).setOrigin(0.5);
     
-        // Animation du texte (facultatif)
-        this.tweens.add({
-            targets: this.cinematicText,
-            //alpha: 0,
-            y: this.player.y - 200,
-            ease: 'Power1',
-            duration: 15000,
-            onComplete: () => {
-                this.cinematicText.destroy();
-                this.cinematicText = null;
+            const currentPhrase = phrases[phraseIndex];
+    
+            // Création du texte
+            this.cinematicText = this.add.text(this.player.x, this.player.y - 528, currentPhrase, {
+                fontSize: "24px",
+                fontFamily: "Arial",
+                color: "#ffffff",
+                backgroundColor: "#000000",
+                padding: {
+                    x: 16,
+                    y: 8
+                }
+            }).setOrigin(0.5);
+    
+            // Animation du texte
+            this.tweens.add({
+                targets: this.cinematicText,
+                y: this.player.y - 200,
+                ease: 'Power1',
+                duration: 8000,
+                onComplete: () => {
+                    this.cinematicText.destroy();
+                    this.cinematicText = null;
+                    phraseIndex++; // Passer à la phrase suivante
+                    displayNextPhrase(); // Afficher la phrase suivante
+                }
+            });
+    
+            // Effet de tremblement de l'écran pour la première phrase seulement
+            if (phraseIndex === 0) {
+                const shakeDuration = 800; // Durée du tremblement (en millisecondes)
+                const shakeIntensity = 0.004; // Intensité du tremblement (en pixels)
+    
+                this.cameras.main.shake(shakeDuration, shakeIntensity);
             }
-        });
+        };
     
-        // Effet de tremblement de l'écran
-        const shakeDuration = 800; // Durée du tremblement (en millisecondes)
-        const shakeIntensity = 0.004; // Intensité du tremblement (en pixels)
-    
-        this.cameras.main.shake(shakeDuration, shakeIntensity);
+        displayNextPhrase();
     }
 
 }

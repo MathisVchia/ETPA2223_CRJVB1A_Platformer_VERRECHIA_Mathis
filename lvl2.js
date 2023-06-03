@@ -5,7 +5,7 @@ export class lvl2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('nikko', 'assets/characters/nikko.png',
+        this.load.spritesheet('nikko', 'assets/characters/nikko.png', 
             { frameWidth: 128, frameHeight: 256 });
         this.load.spritesheet('renard', 'assets/characters/renard.png',
             { frameWidth: 128, frameHeight: 128 });
@@ -87,6 +87,11 @@ export class lvl2 extends Phaser.Scene {
         this.physics.add.collider(this.renard, this.porte);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
+        // Créer le texte au-dessus du renard
+        this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
+        this.interactText.setOrigin(0.5);
+        this.interactText.setVisible(false);
+
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
@@ -126,9 +131,9 @@ export class lvl2 extends Phaser.Scene {
        // console.log(this.nombreMagatama);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-400);
+            this.player.setVelocityX(-1400);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(400);
+            this.player.setVelocityX(1400);
         } else {
             this.player.setVelocityX(0);
         }
@@ -136,7 +141,7 @@ export class lvl2 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down) {
             console.log("SAUTE")
-            this.player.setVelocityY(-675);
+            this.player.setVelocityY(-1675);
         }
 
         //Ajouter les images
@@ -157,6 +162,13 @@ export class lvl2 extends Phaser.Scene {
         }
         if (this.nombreMagatama == 5){
             this.magatamaImages.setTexture("5_maga");
+        }
+
+        const isPlayerTouchingRenard = this.physics.overlap(this.player, this.renard);
+        if (isPlayerTouchingRenard) {
+            this.interactText.setVisible(true);
+        } else {
+            this.interactText.setVisible(false);
         }
         
 
@@ -468,22 +480,25 @@ export class lvl2 extends Phaser.Scene {
         }
     }
     cinematic1() {
-
         // Bloque les mouvements du joueur
         this.player.setImmovable(true);
-
-        // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
-        this.cameras.main.pan(4800, 3530, 3000, 'Sine.easeInOut', false, () => {
+    
+        // Coordonnées du point demandé
+        const targetX = 4800;
+        const targetY = 3530;
+    
+        // Déplace la caméra vers les coordonnées spécifiées pendant 3 secondes
+        this.cameras.main.pan(targetX, targetY, 3000, 'Sine.easeInOut', false, () => {
+    
             // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
-            this.time.delayedCall(5000, () => {
+            this.time.delayedCall(7000, () => {
                 // Fait revenir la caméra sur le joueur
                 this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
                     // Débloque les mouvements du joueur
                     this.player.setImmovable(false);
-
+    
                     // Met à jour la variable pour indiquer que l'action a été réalisée
                     this.actionExecuted = true;
-
                 });
             });
         });

@@ -41,16 +41,14 @@ export class Village extends Phaser.Scene {
         this.actionExecuted = false;
         this.montrer = false;
         this.seekChild = false;
+        this.pnjApproached = false;
+        this.activeText = false;
         
         this.map3 = this.add.tilemap('map3');
         this.tileset = this.map3.addTilesetImage('tileset', 'tileset');
         this.plateformes3 = this.map3.createLayer('Plateformes', this.tileset);
 
         this.plateformes3.setCollisionByProperty({estSolid: true});
-
-        this.player = this.physics.add.sprite(640, 3832, 'nikko');
-        this.player.setCollideWorldBounds(true);
-        this.player.body.setGravityY(1600);
 
       if(this.enfantAvecPlayer == true){
         console.log("Les 2 Sprites en meme temps")
@@ -61,7 +59,7 @@ export class Village extends Phaser.Scene {
 
       if(this.debutJeu == true){
         console.log("Juste Nikko")
-        this.player = this.physics.add.sprite(640, 3832, 'Nikko');
+        this.player = this.physics.add.sprite(640, 3832, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
       }
@@ -100,17 +98,6 @@ export class Village extends Phaser.Scene {
         this.cursorsDown = this.input.keyboard.addKey('S')
         this.interactButton = this.input.keyboard.addKey('E');
         this.SPACE = this.input.keyboard.addKey('SPACE');
-
-         // Créer les variables pour gérer les phrases du dialogue
-        this.dialogue = [
-            " ",
-            "Mon fils, par pitié ! Il n'est pas revenu... Oh mon dieu",
-            "Il est parti vers la forêt derrière-vous ! Pitié, je suis trop faible pour aller le chercher, ramenez-le moi !"
-        ];
-        this.currentLineIndex = 0;
-        this.text = null;
-        this.textTween = null;
-  
 
     }
 
@@ -158,7 +145,7 @@ export class Village extends Phaser.Scene {
         }
 
             // Vérifie si l'action n'a pas encore été réalisée
-            if (this.enfantAvecPlayer == false && !this.actionExecuted && this.player.x >= 1920) {
+            if (this.debutJeu == true && this.player.x >= 1920) {
                 console.log("Voyage Voyage, plus loin que la nuit et le jour")
                 // Bloquer les mouvements du joueur
                 this.player.setVelocity(0);
@@ -174,45 +161,29 @@ export class Village extends Phaser.Scene {
                 
             }
 
-         // Vérifier si le joueur est assez proche du PNJ
-        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.pnj.x, this.pnj.y);
-        this.seekChild = true;
-        console.log("Va chercher l'enfant")
-        if (this.debutJeu == true){
-          if (distance < 300 && !this.text && this.currentLineIndex < this.dialogue.length) {
-          // Créer le texte au-dessus du PNJ
-          this.text = this.add.text(this.pnj.x, this.pnj.y - 200, this.dialogue[this.currentLineIndex], {
-              font: "24px Arial",
-              fill: "#ffffff",
-              backgroundColor: "#000000",
-              padding: { x: 10, y: 10 }
-          }).setOrigin(0.5);
 
-          // Créer l'animation pour faire disparaître le texte après 2 secondes
-          this.textTween = this.tweens.add({
-              targets: this.text,
-              alpha: 1,
-              duration: 5000,
-              onComplete: () => {
-              // Supprimer le texte et passer à la phrase suivante
-              this.text.destroy();
-              this.text = null;
-              this.currentLineIndex++;
-
-              // Réinitialiser l'animation pour la nouvelle phrase
-              if (this.currentLineIndex < this.dialogue.length) {
-                  this.time.delayedCall(2000, () => {
-                  this.update();
-                  this.montrer = true;
-                  });
-              }
-              }
-          });
-          if (this.montrer){
-              this.cinematic3();
+          if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.pnj.x, this.pnj.y) < 250) {
+              // Le joueur s'approche du PNJ
+              this.pnjApproached = true;
+          } else {
+              // Le joueur s'éloigne du PNJ
+              this.pnjApproached = false;
           }
-        };
-      };
+      
+          // Afficher le "E" au-dessus de la tête du PNJ lorsque le joueur s'approche
+          if (this.pnjApproached) {
+              this.showInteractIcon();
+          } else {
+              this.hideInteractIcon();
+          }
+
+          if (this.pnjApproached) {
+            if (this.interactButton.isDown){
+              this.openTextBlock1();
+              this.seekChild = true;
+            }
+          }
+
 }   
 
     gainSaut() {
@@ -303,7 +274,7 @@ export class Village extends Phaser.Scene {
                   this.pnj.setPosition(3964, 3584);
       
                   // Met à jour la variable pour indiquer que l'action a été réalisée
-                  this.actionExecuted = true;
+                  this.debutJeu = false;
                 });
               });
             }
@@ -378,5 +349,59 @@ export class Village extends Phaser.Scene {
         });
 
 
+      }
+
+    showInteractIcon() {
+      if (!this.interactIcon) {
+          this.interactIcon = this.add.text(this.pnj.x, this.pnj.y - 200, "E", {
+              fontSize: "32px",
+              color: "#ffffff",
+          });
+          this.interactIcon.setOrigin(0.5);
+      }
     }
+  
+    hideInteractIcon() {
+      if (this.interactIcon) {
+          this.interactIcon.destroy();
+          this.interactIcon = null;
+      }
+    }
+
+    openTextBlock1() {
+      // Bloquer les mouvements du joueur
+      this.player.setVelocity(0);
+  
+      // Créer le texte interactif
+      const text1 = this.add.text(this.pnj.x, this.pnj.y - 250, "Mon fils... Depuis le tremblement de terre il n'est pas revenu !", {
+          fontSize: "24px",
+          color: "#ffffff",
+          backgroundColor: "#000000"
+      });
+      text1.setOrigin(0.5);
+  
+      const text2 = this.add.text(this.pnj.x, this.pnj.y - 300, "S'il vous plaît, il est tout seul dans la forêt derrière-vous, allez le sauver, pitié !", {
+          fontSize: "24px",
+          color: "#ffffff",
+          backgroundColor: "#000000"
+      });
+      text2.setOrigin(0.5);
+  
+      // Animation de disparition du texte après 2 secondes
+      this.tweens.add({
+          targets: [text1, text2],
+          alpha: 1,
+          duration: 3000,
+          delay: 1000,
+          onComplete: () => {
+              // Détruire le texte après 2 secondes supplémentaires
+              this.time.delayedCall(2000, () => {
+                  text1.destroy();
+                  text2.destroy();
+                  // Débloquer les mouvements du joueur
+                  this.player.setVelocity(0);
+              });
+          }
+      });
+  }
 }

@@ -95,6 +95,11 @@ export class lvl4 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plateformes5);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
+        // Créer le texte au-dessus du renard
+        this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
+        this.interactText.setOrigin(0.5);
+        this.interactText.setVisible(false);
+
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
@@ -171,7 +176,13 @@ export class lvl4 extends Phaser.Scene {
         if (this.nombreMagatama == 5){
             this.magatamaImages.setTexture("5_maga");
         }
-
+        
+        const isPlayerTouchingRenard = this.physics.overlap(this.player, this.renard);
+        if (isPlayerTouchingRenard) {
+            this.interactText.setVisible(true);
+        } else {
+            this.interactText.setVisible(false);
+        }
 
         //Vérifie si le joueur est proche de 'lenfant et si le bouton d'interaction a été pressé
         const distanceToEnfant = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.enfant.x, this.enfant.y);
@@ -309,7 +320,7 @@ export class lvl4 extends Phaser.Scene {
         }
 
         if (this.player.x > 15810){
-            this.scene.start("lvl3", {
+            this.scene.start("Village", {
                 nombreMagatama : this.nombreMagatama,
                 nombreSauvegarde : this.nombreSauvegarde,
                 gainDash : this.gainDash,

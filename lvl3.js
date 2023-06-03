@@ -91,6 +91,11 @@ export class lvl3 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plateformes4);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
+        // Créer le texte au-dessus du renard
+        this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
+        this.interactText.setOrigin(0.5);
+        this.interactText.setVisible(false);
+
         // résolution de l'écran
         this.physics.world.setBounds(0, 0, 10000, 5000);
         // PLAYER - Collision entre le joueur et les limites du niveau
@@ -127,8 +132,6 @@ export class lvl3 extends Phaser.Scene {
     }
 
     update() {
-
-        const isPlayerTouchingDoor = this.physics.overlap(this.player, this.door);
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
@@ -146,7 +149,7 @@ export class lvl3 extends Phaser.Scene {
         }
 
         // Dash (2eme Meca)
-        if(this.gainDash == true){
+        if(this.enfantAvecPlayer == true){
             if(this.dashButton.isDown){
                 this.dash();
             }
@@ -170,6 +173,13 @@ export class lvl3 extends Phaser.Scene {
         }
         if (this.nombreMagatama == 5){
             this.magatamaImages.setTexture("5_maga");
+        }
+
+        const isPlayerTouchingRenard = this.physics.overlap(this.player, this.renard);
+        if (isPlayerTouchingRenard) {
+            this.interactText.setVisible(true);
+        } else {
+            this.interactText.setVisible(false);
         }
 
         // Vérifie si le joueur est proche du renard et si le bouton d'interaction a été pressé
