@@ -7,8 +7,10 @@ export class lvl1 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('nikko', 'assets/characters/nikko.png',
-        {frameWidth : 128, frameHeight : 256});
+        //this.load.spritesheet('nikko', 'assets/characters/nikko.png',
+        //{frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikko', 'assets/characters/spritesheet.png',
+            {frameWidth : 128, frameHeight : 256});
         //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
         //{frameWidth: 128, frameHeight : 128});
 
