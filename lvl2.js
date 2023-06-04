@@ -8,7 +8,7 @@ export class lvl2 extends Phaser.Scene {
         this.load.spritesheet('nikko', 'assets/characters/nikko.png', 
             { frameWidth: 128, frameHeight: 256 });
         this.load.spritesheet('renard', 'assets/characters/renard.png',
-            { frameWidth: 128, frameHeight: 128 });
+            { frameWidth: 256, frameHeight: 128 });
         this.load.spritesheet('clef', 'assets/objects/clef.png',
             { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('porte', 'assets/objects/porte.png',
@@ -18,7 +18,7 @@ export class lvl2 extends Phaser.Scene {
         //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
         //{frameWidth: 128, frameHeight : 128});
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
-
+            //{ frameWidth: 128, frameHeight: 256 }
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('0_maga', 'assets/objects/0_maga.png');
@@ -61,7 +61,7 @@ export class lvl2 extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1650);
 
-        this.renard = this.physics.add.sprite(4800, 3530, 'renard');
+        this.renard = this.physics.add.sprite(4800, 3515, 'renard');
         this.renard.setCollideWorldBounds(true);
 
         this.clef = this.physics.add.sprite(7678, 4292, 'clef');
@@ -76,7 +76,7 @@ export class lvl2 extends Phaser.Scene {
         this.porte.body.setImmovable(true);
 
 
-        this.sauvegarde = this.physics.add.sprite(16000, 3066, 'sauvegarde');
+        this.sauvegarde = this.physics.add.sprite(16000, 3070, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
 

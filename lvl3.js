@@ -18,7 +18,7 @@ export class lvl3 extends Phaser.Scene {
         this.load.spritesheet('enfantSuivi', 'assets/characters/enfantSuivi.png',
         {frameWidth: 256, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
-        {frameWidth: 128, frameHeight : 128});
+        {frameWidth: 256, frameHeight : 128});
         this.load.spritesheet('tireur', 'assets/characters/tireur.png',
         {frameWidth: 128, frameHeight : 256});
         this.load.spritesheet('clef', 'assets/objects/clef.png',

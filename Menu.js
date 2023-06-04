@@ -8,7 +8,7 @@ export class Menu extends Phaser.Scene {
         this.load.image('menu', 'assets/objects/EcranDemarrage.png');
         this.load.image('play', 'assets/characters/toucheDemarrage.png');
         this.load.image('playClic', 'assets/characters/toucheDemarrageClic.png');
-        this.load.image('light', 'assets/effects/light.png');
+        this.load.audio('theme', 'assets/objects/NikkoTheme.mp3');
     }
 
     create() {
@@ -21,6 +21,10 @@ export class Menu extends Phaser.Scene {
 
         // Ajouter le bouton play avec une taille proportionnelle à l'écran
         this.boutonPlay = this.add.image(screenWidth / 2, screenHeight / 1.2, 'play').setScale(screenWidth / 1920, screenHeight / 1080).setInteractive();
+
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('theme', { loop: true });
+        this.music.play();
 
         // Gérer l'événement de survol du bouton
         this.boutonPlay.on('pointerover', () => {
@@ -43,6 +47,8 @@ export class Menu extends Phaser.Scene {
     }
 
     letsBegin() {
-        this.scene.start("lvl2");
+        // Arrêter la musique
+        this.music.stop();
+        this.scene.start("lvl1");
     }
 }

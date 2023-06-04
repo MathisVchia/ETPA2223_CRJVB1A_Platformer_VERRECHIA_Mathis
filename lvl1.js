@@ -14,6 +14,7 @@ export class lvl1 extends Phaser.Scene {
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('magatama', 'assets/objects/magatama.png');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
         
@@ -39,6 +40,11 @@ export class lvl1 extends Phaser.Scene {
         // Load des maps/layers de maps    
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
+        this.tilesetDecors = this.map1.addTilesetImage('tilesetDecors', 'tilesetDecors');
+        this.loin = this.map1.createLayer('loin', this.tilesetDecors);
+        this.fond = this.map1.createLayer('fond', this.tilesetDecors);
+        this.decors = this.map1.createLayer('decors', this.tilesetDecors);
+        this.temple = this.map1.createLayer('temple', this.tilesetDecors);
         this.plateformes = this.map1.createLayer('Plateformes', this.tileset);
         this.plateformes.setCollisionByProperty({estSolid: true});
 
