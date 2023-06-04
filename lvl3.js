@@ -79,7 +79,7 @@ export class lvl3 extends Phaser.Scene {
             this.player.body.setGravityY(1600);
         }
 
-        this.renard = this.physics.add.sprite(11775, 4140, 'renard');
+        this.renard = this.physics.add.sprite(11775, 4135, 'renard');
         this.renard.setCollideWorldBounds(true);
         
         this.sauvegarde = this.physics.add.sprite(15548, 3585, 'sauvegarde');

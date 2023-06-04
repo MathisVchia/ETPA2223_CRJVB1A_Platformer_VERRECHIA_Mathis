@@ -136,9 +136,9 @@ export class lvl2 extends Phaser.Scene {
        // console.log(this.nombreMagatama);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-1400);
+            this.player.setVelocityX(-400);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(1400);
+            this.player.setVelocityX(400);
         } else {
             this.player.setVelocityX(0);
         }
@@ -146,7 +146,7 @@ export class lvl2 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down) {
             console.log("SAUTE")
-            this.player.setVelocityY(-1675);
+            this.player.setVelocityY(-675);
         }
 
         //Ajouter les images
