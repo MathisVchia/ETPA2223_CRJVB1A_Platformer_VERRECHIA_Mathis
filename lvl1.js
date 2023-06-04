@@ -49,7 +49,7 @@ export class lvl1 extends Phaser.Scene {
         this.plateformes.setCollisionByProperty({estSolid: true});
 
         //Créa perso
-        this.player = this.physics.add.sprite(128, 3074, 'nikko');
+        this.player = this.physics.add.sprite(340, 3074, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
         this.physics.add.collider(this.player, this.plateformes);

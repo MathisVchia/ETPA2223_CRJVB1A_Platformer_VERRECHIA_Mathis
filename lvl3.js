@@ -63,7 +63,7 @@ export class lvl3 extends Phaser.Scene {
 
         this.plateformes4.setCollisionByProperty({estSolid: true});
 
-        this.sanctuaire = this.physics.add.sprite(3327, 4481, 'sanctuaire');
+        this.sanctuaire = this.physics.add.sprite(3327, 4630, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
@@ -79,10 +79,10 @@ export class lvl3 extends Phaser.Scene {
             this.player.body.setGravityY(1600);
         }
 
-        this.renard = this.physics.add.sprite(11775, 4090, 'renard');
+        this.renard = this.physics.add.sprite(11775, 4140, 'renard');
         this.renard.setCollideWorldBounds(true);
         
-        this.sauvegarde = this.physics.add.sprite(15548, 3448, 'sauvegarde');
+        this.sauvegarde = this.physics.add.sprite(15548, 3585, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
 

@@ -21,6 +21,7 @@ export class lvl2 extends Phaser.Scene {
             //{ frameWidth: 128, frameHeight: 256 }
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('0_maga', 'assets/objects/0_maga.png');
         this.load.image('1_maga', 'assets/objects/1_maga.png');
         this.load.image('2_maga', 'assets/objects/2_maga.png');
@@ -52,6 +53,10 @@ export class lvl2 extends Phaser.Scene {
 
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
+        this.tilesetDecors = this.map2.addTilesetImage('tilesetDecors', 'tilesetDecors');
+        this.loin = this.map2.createLayer('loin', this.tilesetDecors);
+        this.fond = this.map2.createLayer('fond', this.tilesetDecors);
+        this.decors = this.map2.createLayer('decors', this.tilesetDecors);
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
         this.ennemi = this.map2.createLayer('ennemi', this.tileset);
 

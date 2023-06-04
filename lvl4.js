@@ -31,6 +31,7 @@ export class lvl4 extends Phaser.Scene {
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('0_maga', 'assets/objects/0_maga.png');
         this.load.image('1_maga', 'assets/objects/1_maga.png');
         this.load.image('2_maga', 'assets/objects/2_maga.png');
@@ -59,30 +60,34 @@ export class lvl4 extends Phaser.Scene {
         
         this.map5 = this.add.tilemap('map5');
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
+        this.tilesetDecors = this.map5.addTilesetImage('tilesetDecors', 'tilesetDecors');
+        this.loin = this.map5.createLayer('loin', this.tilesetDecors);
+        this.fond = this.map5.createLayer('fond', this.tilesetDecors);
+        this.decors = this.map5.createLayer('decors', this.tilesetDecors);
         this.plateformes5 = this.map5.createLayer('Plateformes', this.tileset);
         this.ennemi = this.map5.createLayer('ennemi', this.tileset);
 
         this.plateformes5.setCollisionByProperty({estSolid: true});
 
-        this.sanctuaire = this.physics.add.sprite(5118, 3582, 'sanctuaire');
+        this.sanctuaire = this.physics.add.sprite(5118, 3612, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
-        this.player = this.physics.add.sprite(15612, 2366, 'nikko');
+        this.player = this.physics.add.sprite(15612, 2326, 'nikko');
         this.player.setCollideWorldBounds(true);
         this.player.body.setGravityY(1600);
 
-        this.enfant = this.physics.add.sprite(768, 3582, 'enfant');
+        this.enfant = this.physics.add.sprite(768, 3565, 'enfant');
         this.enfant.setCollideWorldBounds(true);
         
-        this.renard = this.physics.add.sprite(11136, 2688, 'renard');
+        this.renard = this.physics.add.sprite(11136, 2720, 'renard');
         this.renard.setCollideWorldBounds(true);
         
         this.sauvegarde = this.physics.add.sprite(12928, 2936, 'sauvegarde');
         this.sauvegarde.setCollideWorldBounds(true);
         this.sauvegarde.body.setImmovable(true);
 
-        this.sauvegarde2 = this.physics.add.sprite(1022, 3458, 'sauvegarde');
+        this.sauvegarde2 = this.physics.add.sprite(1022, 3582, 'sauvegarde');
         this.sauvegarde2.setCollideWorldBounds(true);
         this.sauvegarde2.body.setImmovable(true);
 
@@ -92,7 +97,7 @@ export class lvl4 extends Phaser.Scene {
         
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
 
-        this.physics.add.collider(this.player, this.plateformes5);
+        this.physics.add.collider(this.player, this.plateformes5, console.log("fref"));
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         // Créer le texte au-dessus du renard
