@@ -1,16 +1,16 @@
 // importation des différents calques
 
-import {Menu as Menu} from "/Menu.js"
+import {Menu as Menu} from "./Menu.js"
 
-import { lvl1 as lvl1} from "/lvl1.js"
+import { lvl1 as lvl1} from "./lvl1.js"
 
-import { lvl2 as lvl2} from "/lvl2.js"
+import { lvl2 as lvl2} from "./lvl2.js"
 
-import { lvl3 as lvl3} from "/lvl3.js"
+import { lvl3 as lvl3} from "./lvl3.js"
 
-import { lvl4 as lvl4} from "/lvl4.js"
+import { lvl4 as lvl4} from "./lvl4.js"
 
-import {Village as Village} from "/Village.js"
+import {Village as Village} from "./Village.js"
 
 var config = {
     type: Phaser.AUTO,
@@ -25,7 +25,7 @@ var config = {
             debug: true,
             tileBias: 128
     }},
-    pixelArt:true,
+    pixelArt:false,
     input:{gamepad:true},
     scene: [Menu, lvl1, lvl2, Village, lvl3, lvl4],     
     };
