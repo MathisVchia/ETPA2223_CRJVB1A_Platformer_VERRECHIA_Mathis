@@ -12,7 +12,9 @@ export class lvl2 extends Phaser.Scene {
         this.load.spritesheet('clef', 'assets/objects/clef.png',
             { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('porte', 'assets/objects/porte.png',
-            { frameWidth: 128, frameHeight: 128 });
+            { frameWidth: 256, frameHeight: 768 });
+            this.load.spritesheet('porteOuverte', 'assets/objects/porteOuverte.png',
+            { frameWidth: 640, frameHeight: 768 });
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
             { frameWidth: 128, frameHeight: 128 });
         //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
@@ -76,7 +78,7 @@ export class lvl2 extends Phaser.Scene {
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
 
-        this.porte = this.physics.add.sprite(11848, 2812, 'porte');
+        this.porte = this.physics.add.sprite(11848, 2559, 'porte');
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
 
@@ -136,9 +138,9 @@ export class lvl2 extends Phaser.Scene {
        // console.log(this.nombreMagatama);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-400);
+            this.player.setVelocityX(-1400);
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(400);
+            this.player.setVelocityX(1400);
         } else {
             this.player.setVelocityX(0);
         }
@@ -146,7 +148,7 @@ export class lvl2 extends Phaser.Scene {
         // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down) {
             console.log("SAUTE")
-            this.player.setVelocityY(-675);
+            this.player.setVelocityY(-1675);
         }
 
         //Ajouter les images
@@ -452,7 +454,7 @@ export class lvl2 extends Phaser.Scene {
     openDoor() {
         //Détecter si le joueur possède la clef
         console.log("SESAME OUVRE TOI")
-        this.porte.destroy();
+        this.porte.setTexture("porteOuverte");
         this.hasKey = false;
     }
 
