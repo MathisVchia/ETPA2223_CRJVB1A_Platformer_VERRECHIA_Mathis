@@ -13,14 +13,14 @@ export class lvl2 extends Phaser.Scene {
             { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('porte', 'assets/objects/porte.png',
             { frameWidth: 256, frameHeight: 768 });
-            this.load.spritesheet('porteOuverte', 'assets/objects/porteOuverte.png',
+        this.load.spritesheet('porteOuverte', 'assets/objects/porteOuverte.png',
             { frameWidth: 640, frameHeight: 768 });
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
             { frameWidth: 128, frameHeight: 128 });
-        //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        //{frameWidth: 128, frameHeight : 128});
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
             //{ frameWidth: 128, frameHeight: 256 }
+        this.load.image('ennemiPetit', 'assets/characters/ennemiPetit.png');
+        this.load.image('ennemiGrand', 'assets/characters/ennemiGrand.png');
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
@@ -53,6 +53,10 @@ export class lvl2 extends Phaser.Scene {
         this.nombreMagatama = 0;
         this.nombreSauvegarde = 0;
 
+        //variable ennemis
+        this.ennemisPetitGroup;
+        this.ennemisGrandGroup;
+
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map2.addTilesetImage('tilesetDecors', 'tilesetDecors');
@@ -60,10 +64,8 @@ export class lvl2 extends Phaser.Scene {
         this.fond = this.map2.createLayer('fond', this.tilesetDecors);
         this.decors = this.map2.createLayer('decors', this.tilesetDecors);
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
-        this.ennemis = this.map2.createLayer('ennemis', this.tilesetDecors);
 
         this.plateformes2.setCollisionByProperty({ estSolid: true });
-        this.ennemis.setCollisionByProperty({ estSolid: true});
 
         this.player = this.physics.add.sprite(112, 2544, 'nikko');
         this.player.setCollideWorldBounds(true);
@@ -89,6 +91,24 @@ export class lvl2 extends Phaser.Scene {
         this.sauvegarde.body.setImmovable(true);
 
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiPetit = this.physics.add.group();
+
+        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
+        this.Mobs.objects.forEach(Mobs => {
+            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
+            this.ennemiPetit.add(this.Mobs_create);
+        });
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiGrand = this.physics.add.group();
+
+        this.MobsGrand = this.map2.getObjectLayer('ennemiGrand');
+        this.MobsGrand.objects.forEach(MobsGrand => {
+            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 130, MobsGrand.y + 16, 'ennemiGrand');
+            this.ennemiGrand.add(this.MobsGrand_create);
+        });
 
         this.physics.add.collider(this.player, this.plateformes2);
         this.physics.add.collider(this.clef, this.plateformes2);
@@ -185,6 +205,7 @@ export class lvl2 extends Phaser.Scene {
             this.recruterRenard();
             this.renardIsFollowing = true;
         }
+
 
         // Si le renard suit déjà le joueur, met à jour sa position pour qu'il reste derrière le joueur
         if (this.renardIsFollowing) {
