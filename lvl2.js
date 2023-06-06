@@ -60,9 +60,10 @@ export class lvl2 extends Phaser.Scene {
         this.fond = this.map2.createLayer('fond', this.tilesetDecors);
         this.decors = this.map2.createLayer('decors', this.tilesetDecors);
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
-        this.ennemi = this.map2.createLayer('ennemi', this.tileset);
+        this.ennemis = this.map2.createLayer('ennemis', this.tilesetDecors);
 
         this.plateformes2.setCollisionByProperty({ estSolid: true });
+        this.ennemis.setCollisionByProperty({ estSolid: true});
 
         this.player = this.physics.add.sprite(112, 2544, 'nikko');
         this.player.setCollideWorldBounds(true);
@@ -92,7 +93,6 @@ export class lvl2 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.plateformes2);
         this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
-        this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
 
         // Créer le texte au-dessus du renard
         this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
@@ -226,7 +226,7 @@ export class lvl2 extends Phaser.Scene {
             if (this.hasKey === false) {
                 const delay = 3000; // Temps d'affichage en millisecondes
 
-                const text = this.add.text(800, 3916, "Vous avez besoin d'une clé pour ouvrir la porte.", {
+                const text = this.add.text(this.player.x, this.player.y - 200, "La porte est fermée... Où est passée cette foutue clef...", {
                     font: "24px Arial",
                     fill: "#ffffff"
                 });
@@ -462,7 +462,6 @@ export class lvl2 extends Phaser.Scene {
         // Si le renard suit encore le joueur, le faire disparaitre
         if (this.renardIsFollowing) {
             this.renardIsFollowing = false;
-            this.renard.disableBody(true, true);
         }
 
         // Recommencer le niveau "lvl1"
@@ -522,5 +521,6 @@ export class lvl2 extends Phaser.Scene {
     recupSave() {
         this.nombreMagatama = this.nombreSauvegarde;
     }
+
 }
 
