@@ -18,6 +18,7 @@ export class lvl1 extends Phaser.Scene {
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('magatama', 'assets/objects/magatama.png');
+        this.load.audio('music', 'assets/objects/music.mp3');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
         
     }
@@ -49,6 +50,11 @@ export class lvl1 extends Phaser.Scene {
         this.temple = this.map1.createLayer('temple', this.tilesetDecors);
         this.plateformes = this.map1.createLayer('Plateformes', this.tileset);
         this.plateformes.setCollisionByProperty({estSolid: true});
+
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('music', { loop: true });
+        this.music.play();
+        this.music.setVolume(0.3);
 
         //Créa perso
         this.player = this.physics.add.sprite(340, 3074, 'nikko');
@@ -194,6 +200,7 @@ export class lvl1 extends Phaser.Scene {
     
 
     changedLevel(){
+        this.music.stop();
         this.scene.start("lvl2");
     }
 
