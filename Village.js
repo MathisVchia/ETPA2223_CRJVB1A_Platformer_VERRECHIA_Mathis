@@ -205,85 +205,46 @@ export class Village extends Phaser.Scene {
     }
 
     cinematic2() {
-        // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
-        this.cameras.main.pan(this.pnj.x, this.pnj.y, 3000, 'Sine.easeInOut', false, () => {
-          // Bloque les mouvements du joueur
+      // Déplace la caméra vers les coordonnées spécifiées (4800, 3530) pendant 3 secondes
+      this.cameras.main.pan(this.pnj.x, this.pnj.y, 3000, 'Sine.easeInOut', false, () => {
+          // Bloquer les mouvements du joueur
           this.player.setImmovable(true);
-      
-          // Animation du PNJ : déplacer de gauche à droite avec un tween
-          const duration = 2000; // Durée totale de l'animation (en millisecondes)
-          const distance = -1800; // Distance de déplacement (en pixels)
-          let continueMoving = true; // Variable pour vérifier si le PNJ doit continuer à bouger
-      
-          const tweens = this.tweens.createTimeline();
-      
-          tweens.add({
-            targets: this.pnj,
-            x: this.pnj.x + distance,
-            duration: duration / 2,
-            ease: 'Sine.easeInOut',
-            onUpdate: () => {
-              if (!continueMoving) {
-                tweens.stop(); // Arrête les tweens si continueMoving est faux
-              }
-            },
-            onComplete: () => {
-              // Affichage du texte sous le PNJ
-              const text = this.add.text(this.pnj.x + 1720, this.pnj.y - 158, "Mon fils ? Quelqu'un a vu mon fils ?", {
-                font: "24px Arial",
-                fill: "#ffffff",
-                backgroundColor: "#000000"
-              }).setOrigin(0.5);
-      
-              // Animation de disparition du texte après 2 secondes
-              this.tweens.add({
-                targets: text,
-                alpha: 1,
-                duration: 2000,
-                delay: 1000,
-                onComplete: () => {
+  
+          // Affichage du texte sous le PNJ
+          const text = this.add.text(this.pnj.x + 1720, this.pnj.y - 158, "Mon fils ? Quelqu'un a vu mon fils ?", {
+              font: "24px Arial",
+              fill: "#ffffff",
+              backgroundColor: "#000000"
+          }).setOrigin(0.5);
+  
+          // Animation de disparition du texte après 2 secondes
+          this.tweens.add({
+              targets: text,
+              alpha: 1,
+              duration: 2000,
+              delay: 1000,
+              onComplete: () => {
                   // Détruire le texte après 2 secondes supplémentaires
                   this.time.delayedCall(2000, () => {
-                    text.destroy();
+                      text.destroy();
                   });
-                }
-              });
-              this.pnj.setVelocityX(0);
-            }
+              }
           });
-      
-          tweens.add({
-            targets: this.pnj,
-            x: this.pnj.x - distance,
-            duration: duration / 2,
-            ease: 'Sine.easeInOut',
-            delay: duration / 2,
-            onComplete: () => {
-              // Arrêt du mouvement du PNJ lorsque la caméra revient sur le joueur
-              this.pnj.setVelocityX(0);
-      
-              // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
-              this.time.delayedCall(5000, () => {
-                // Fait revenir la caméra sur le joueur
-                this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
-                  // Débloque les mouvements du joueur
-                  this.player.setImmovable(false);
-      
-                  // Arrête le mouvement du PNJ
-                  continueMoving = false;
-                  this.pnj.setPosition(3964, 3584);
-      
-                  // Met à jour la variable pour indiquer que l'action a été réalisée
-                  this.debutJeu = false;
-                });
-              });
-            }
+      });
+  
+      // Après quelques secondes, revient à la caméra sur le joueur et débloque ses mouvements
+      this.time.delayedCall(5000, () => {
+          // Fait revenir la caméra sur le joueur
+          this.cameras.main.pan(this.player.x, this.player.y, 1000, 'Sine.easeInOut', false, () => {
+              // Débloque les mouvements du joueur
+              this.player.setImmovable(false);
+  
+              // Met à jour la variable pour indiquer que l'action a été réalisée
+              this.debutJeu = false;
           });
-      
-          tweens.play();
-        });
-      }
-    
+      });
+  }
+   
 
     openTextBlock() {
         // Bloquer les mouvements du joueur

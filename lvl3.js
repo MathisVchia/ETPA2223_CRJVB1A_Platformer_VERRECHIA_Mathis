@@ -27,8 +27,8 @@ export class lvl3 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
-        this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        {frameWidth: 128, frameHeight : 128});
+        this.load.image('ennemiPetit', 'assets/characters/ennemiPetit.png');
+        this.load.image('ennemiGrand', 'assets/characters/ennemiGrand.png');
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
 
 
@@ -115,7 +115,8 @@ export class lvl3 extends Phaser.Scene {
         });
 
         this.physics.add.collider(this.player, this.plateformes4);
-        this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
+        this.physics.add.collider(this.player, this.ennemiGrand, this.mort, null, this);
+        this.physics.add.collider(this.player, this.ennemiPetit, this.mort, null, this);
 
         // Créer le texte au-dessus du renard
         this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });

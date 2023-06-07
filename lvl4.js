@@ -111,7 +111,7 @@ export class lvl4 extends Phaser.Scene {
 
 
         this.physics.add.collider(this.player, this.plateformes5, console.log("fref"));
-        this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
+        this.physics.add.collider(this.player, this.ennemiPetit, this.mort, null, this);
 
         // Créer le texte au-dessus du renard
         this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
@@ -510,6 +510,10 @@ export class lvl4 extends Phaser.Scene {
     suivreEnfant() {
         this.player.setTexture('enfantSuivi');
         this.enfantAvecPlayer = true;
+    }
+
+    mort() {
+        this.scene.restart();
     }
 }
 
