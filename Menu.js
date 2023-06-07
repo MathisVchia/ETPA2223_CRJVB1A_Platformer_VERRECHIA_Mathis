@@ -49,6 +49,6 @@ export class Menu extends Phaser.Scene {
     letsBegin() {
         // Arrêter la musique
         this.music.stop();
-        this.scene.start("lvl2");
+        this.scene.start("lvl1");
     }
 }

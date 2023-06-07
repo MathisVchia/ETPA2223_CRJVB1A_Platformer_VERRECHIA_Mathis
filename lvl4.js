@@ -25,8 +25,8 @@ export class lvl4 extends Phaser.Scene {
         {frameWidth: 128, frameHeight : 128});
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
         {frameWidth: 128, frameHeight : 128});
-        this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
-        {frameWidth: 128, frameHeight : 128});
+        this.load.image('ennemiPetit', 'assets/characters/ennemiPetit.png');
+        this.load.image('ennemiGrand', 'assets/characters/ennemiGrand.png');
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
 
 
@@ -57,6 +57,10 @@ export class lvl4 extends Phaser.Scene {
         this.gainDash = false;
         this.enfantAvecPlayer = false;
         this.sautUse = false;
+
+        //variable ennemis
+        this.ennemisPetitGroup;
+        this.ennemisGrandGroup;
         
         this.map5 = this.add.tilemap('map5');
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
@@ -65,7 +69,6 @@ export class lvl4 extends Phaser.Scene {
         this.fond = this.map5.createLayer('fond', this.tilesetDecors);
         this.decors = this.map5.createLayer('decors', this.tilesetDecors);
         this.plateformes5 = this.map5.createLayer('Plateformes', this.tileset);
-        this.ennemi = this.map5.createLayer('ennemi', this.tileset);
 
         this.plateformes5.setCollisionByProperty({estSolid: true});
 
@@ -96,6 +99,16 @@ export class lvl4 extends Phaser.Scene {
         this.sauvegarde3.body.setImmovable(true);
         
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiPetit = this.physics.add.group();
+
+        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
+        this.Mobs.objects.forEach(Mobs => {
+            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
+            this.ennemiPetit.add(this.Mobs_create);
+        });
+
 
         this.physics.add.collider(this.player, this.plateformes5, console.log("fref"));
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);

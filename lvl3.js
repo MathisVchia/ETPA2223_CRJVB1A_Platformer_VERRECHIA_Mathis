@@ -33,6 +33,7 @@ export class lvl3 extends Phaser.Scene {
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
+        this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('0_maga', 'assets/objects/0_maga.png');
         this.load.image('1_maga', 'assets/objects/1_maga.png');
         this.load.image('2_maga', 'assets/objects/2_maga.png');
@@ -55,11 +56,18 @@ export class lvl3 extends Phaser.Scene {
         this.canClimb = false;
         this.actionExecuted = false;
         this.magatama = null;
+
+        //variable ennemis
+        this.ennemisPetitGroup;
+        this.ennemisGrandGroup;
         
         this.map4 = this.add.tilemap('map4');
         this.tileset = this.map4.addTilesetImage('tileset', 'tileset');
+        this.tilesetDecors = this.map4.addTilesetImage('tilesetDecors', 'tilesetDecors');
+        this.loin = this.map4.createLayer('loin', this.tilesetDecors);
+        this.fond = this.map4.createLayer('fond', this.tilesetDecors);
+        this.decors = this.map4.createLayer('decors', this.tilesetDecors);
         this.plateformes4 = this.map4.createLayer('Plateformes', this.tileset);
-        this.ennemi = this.map4.createLayer('ennemi', this.tileset);
 
         this.plateformes4.setCollisionByProperty({estSolid: true});
 
@@ -87,6 +95,24 @@ export class lvl3 extends Phaser.Scene {
         this.sauvegarde.body.setImmovable(true);
 
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiPetit = this.physics.add.group();
+
+        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
+        this.Mobs.objects.forEach(Mobs => {
+            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
+            this.ennemiPetit.add(this.Mobs_create);
+        });
+
+        // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiGrand = this.physics.add.group();
+
+        this.MobsGrand = this.map2.getObjectLayer('ennemiGrand');
+        this.MobsGrand.objects.forEach(MobsGrand => {
+            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 130, MobsGrand.y + 16, 'ennemiGrand');
+            this.ennemiGrand.add(this.MobsGrand_create);
+        });
 
         this.physics.add.collider(this.player, this.plateformes4);
         this.physics.add.collider(this.player, this.ennemi, this.recommencerNiveau, null, this);
@@ -476,5 +502,10 @@ export class lvl3 extends Phaser.Scene {
         //};
       }
     }
+
+    mort() {
+        this.scene.restart();
+    }
+    
 }
 

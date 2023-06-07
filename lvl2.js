@@ -111,6 +111,8 @@ export class lvl2 extends Phaser.Scene {
         });
 
         this.physics.add.collider(this.player, this.plateformes2);
+        this.physics.add.collider(this.player, this.ennemiGrand, this.mort, null, this);
+        this.physics.add.collider(this.player, this.ennemiPetit, this.mort, null, this);
         this.physics.add.collider(this.clef, this.plateformes2);
         this.physics.add.collider(this.renard, this.porte);
 
@@ -541,6 +543,10 @@ export class lvl2 extends Phaser.Scene {
 
     recupSave() {
         this.nombreMagatama = this.nombreSauvegarde;
+    }
+
+    mort() {
+        this.scene.restart();
     }
 
 }

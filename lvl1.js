@@ -40,11 +40,13 @@ export class lvl1 extends Phaser.Scene {
         const endZoomValue = 1.5;
         const halfwayZoomPercentage = 0.5; // Zoom pour faire un effet
 
+
         // Load des maps/layers de maps    
         this.map1 = this.add.tilemap('map1');
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map1.addTilesetImage('tilesetDecors', 'tilesetDecors');
         this.loin = this.map1.createLayer('loin', this.tilesetDecors);
+        //this.loin.setScrollFactor(0.8,1);
         this.fond = this.map1.createLayer('fond', this.tilesetDecors);
         this.decors = this.map1.createLayer('decors', this.tilesetDecors);
         this.temple = this.map1.createLayer('temple', this.tilesetDecors);
