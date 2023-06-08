@@ -13,3 +13,9 @@ Commandes :
 
     Pointeur de visé pour les renards :
     Clic gauche souris
+
+    Double Saut :
+    Barre Espace
+
+    Dash :
+    Shift
