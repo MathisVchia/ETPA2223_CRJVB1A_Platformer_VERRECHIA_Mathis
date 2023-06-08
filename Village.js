@@ -13,12 +13,14 @@ export class Village extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('nikko', 'assets/characters/nikko.png',
-        {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikko', 'assets/characters/nikkoWalking.png',
+            {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikkoL', 'assets/characters/nikkoWalkingL.png',
+            {frameWidth : 128, frameHeight : 256});
         this.load.spritesheet('enfantSuivi', 'assets/characters/enfant.png',
-        {frameWidth : 256, frameHeight : 256});
+            {frameWidth : 256, frameHeight : 256});
         this.load.spritesheet('pnj', 'assets/characters/pnj.png',
-        {frameWidth : 128, frameHeight : 256});
+            {frameWidth : 128, frameHeight : 256});
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('1_maga', 'assets/objects/1_maga.png');
@@ -26,6 +28,7 @@ export class Village extends Phaser.Scene {
         this.load.image('3_maga', 'assets/objects/3_maga.png');
         this.load.image('4_maga', 'assets/objects/4_maga.png');
         this.load.image('5_maga', 'assets/objects/5_maga.png');
+        this.load.audio('music', 'assets/objects/music.mp3');
         this.load.tilemapTiledJSON('map3', 'assets/maps/Village.json');
         
     }
@@ -49,6 +52,11 @@ export class Village extends Phaser.Scene {
         this.plateformes3 = this.map3.createLayer('Plateformes', this.tileset);
 
         this.plateformes3.setCollisionByProperty({estSolid: true});
+
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('music', { loop: true });
+        this.music.play();
+        this.music.setVolume(0.1);
 
       if(this.enfantAvecPlayer == true){
         console.log("Les 2 Sprites en meme temps")
@@ -90,6 +98,27 @@ export class Village extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nikkoL', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 29 , end : 29}),
+            frameRate: 32,
+            repeat:-1
+        });
+
         this.interactButton = this.input.keyboard.addKey('E');
         this.cursors = this.input.keyboard.createCursorKeys();
         this.cursorsUp = this.input.keyboard.addKey('Z');
@@ -107,14 +136,20 @@ export class Village extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-400);
+            this.player.anims.play('left', true);
+            this.player.setVelocityX(-375);
+       
+
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(400);
+            this.player.anims.play('right', true);
+            this.player.setVelocityX(375);
+
         } else {
             this.player.setVelocityX(0);
+            this.player.anims.play('idle', true);
         }
-    
-        // Saut
+
+    // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
             this.player.setVelocityY(-675);
@@ -262,6 +297,7 @@ export class Village extends Phaser.Scene {
        // Lorsqu'on appuie sur le bouton, on lance le jeu
        console.log("Est ce que tu m'entends hého")
        bouton.on("pointerdown", () => {
+            this.music.stop();
            this.scene.start("lvl2");
        });
 
@@ -277,6 +313,7 @@ export class Village extends Phaser.Scene {
        // Lorsqu'on appuie sur le bouton, on lance le jeu
        console.log("Est ce que tu me sens hého")
        bouton2.on("pointerdown", () => {
+        this.music.stop();
           this.scene.start("lvl3", {
             nombreMagatama : this.nombreMagatama,
             nombreSauvegarde : this.nombreSauvegarde,

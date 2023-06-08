@@ -9,16 +9,30 @@ export class lvl1 extends Phaser.Scene {
     preload() {
         //this.load.spritesheet('nikko', 'assets/characters/nikko.png',
         //{frameWidth : 128, frameHeight : 256});
-        this.load.spritesheet('nikko', 'assets/characters/spritesheet.png',
+        this.load.spritesheet('nikko', 'assets/characters/nikkoWalking.png',
+            {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikkoL', 'assets/characters/nikkoWalkingL.png',
+            {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikkoJump', 'assets/characters/nikkoJump.png',
             {frameWidth : 128, frameHeight : 256});
         //this.load.spritesheet('ennemi', 'assets/objects/ennemi.png',
         //{frameWidth: 128, frameHeight : 128});
 
+        //background
+        this.load.image('ciel', 'assets/bg/ciel1.png');
+        this.load.image('ciel2', 'assets/bg/ciel2.png');
+        this.load.image('fuji1', 'assets/bg/fuji1.png');
+        this.load.image('fuji2', 'assets/bg/fuji2.png');
+        this.load.image('mont1', 'assets/bg/mont1.png');
+        this.load.image('mont2', 'assets/bg/mont2.png');
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
         this.load.image('magatama', 'assets/objects/magatama.png');
         this.load.audio('music', 'assets/objects/music.mp3');
+        this.load.audio('boom', 'assets/objects/boom.mp3');
+        this.load.audio('foot', 'assets/objects/foot.mp3');
+        this.load.audio('jump', 'assets/objects/jump.mp3');
         this.load.tilemapTiledJSON('map1', 'assets/maps/V1Lvl1.json');
         
     }
@@ -39,6 +53,29 @@ export class lvl1 extends Phaser.Scene {
         const startZoomValue = 1;
         const endZoomValue = 1.5;
         const halfwayZoomPercentage = 0.5; // Zoom pour faire un effet
+/*
+        // affichage du background
+        this.backgroundParallax1 = this.add.tileSprite(0,0,9600,5120, "ciel");
+        this.backgroundParallax1.setOrigin(0,0);
+        this.backgroundParallax1.setScrollFactor(1,1);
+        this.backgroundParallax2 = this.add.tileSprite(5120,0,9600,5120, "ciel2");
+        this.backgroundParallax2.setOrigin(0,0);
+        this.backgroundParallax2.setScrollFactor(1,1);
+
+        this.backgroundParallax3 = this.add.tileSprite(0,0,9600,5120, "fuji1");
+        this.backgroundParallax3.setOrigin(0,0);
+        this.backgroundParallax3.setScrollFactor(1,1);
+        this.backgroundParallax4 = this.add.tileSprite(5120,0,9600,5120, "fuji2");
+        this.backgroundParallax4.setOrigin(0,0);
+        this.backgroundParallax4.setScrollFactor(1,1);
+
+        this.backgroundParallax5 = this.add.tileSprite(0,0,9600,5120, "mont1");
+        this.backgroundParallax5.setOrigin(0,0);
+        this.backgroundParallax5.setScrollFactor(1,1);
+        this.backgroundParallax6 = this.add.tileSprite(5120,0,9600,5120, "mont2");
+        this.backgroundParallax6.setOrigin(0,0);
+        this.backgroundParallax6.setScrollFactor(1,1);
+*/
 
 
         // Load des maps/layers de maps    
@@ -46,7 +83,7 @@ export class lvl1 extends Phaser.Scene {
         this.tileset = this.map1.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map1.addTilesetImage('tilesetDecors', 'tilesetDecors');
         this.loin = this.map1.createLayer('loin', this.tilesetDecors);
-        //this.loin.setScrollFactor(0.8,1);
+        this.loin.setScrollFactor(0.995,1);
         this.fond = this.map1.createLayer('fond', this.tilesetDecors);
         this.decors = this.map1.createLayer('decors', this.tilesetDecors);
         this.temple = this.map1.createLayer('temple', this.tilesetDecors);
@@ -56,7 +93,7 @@ export class lvl1 extends Phaser.Scene {
         // Ajouter la musique et la jouer en boucle
         this.music = this.sound.add('music', { loop: true });
         this.music.play();
-        this.music.setVolume(0.3);
+        this.music.setVolume(0.1);
 
         //Créa perso
         this.player = this.physics.add.sprite(340, 3074, 'nikko');
@@ -99,6 +136,35 @@ export class lvl1 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nikkoL', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 29 , end : 29}),
+            frameRate: 32,
+            repeat:-1
+        });
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('nikkoJump', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+
         //this.cursors = this.input.keyboard.createCursorKeys();
 
         this.cursorsUp = this.input.keyboard.addKey('Z');
@@ -117,13 +183,17 @@ export class lvl1 extends Phaser.Scene {
          if (this.canMove) {
             // Gérez les mouvements du joueur
             if (this.cursorsLeft.isDown) {
-                this.player.setVelocityX(-400);
+                this.player.anims.play('left', true);
+                this.player.setVelocityX(-375);
+                
 
             } else if (this.cursorsRight.isDown) {
-                this.player.setVelocityX(400);
+                this.player.anims.play('right', true);
+                this.player.setVelocityX(375);
 
             } else {
                 this.player.setVelocityX(0);
+                this.player.anims.play('idle', true);
             }
     
         // Saut
@@ -266,6 +336,9 @@ export class lvl1 extends Phaser.Scene {
     
             // Effet de tremblement de l'écran pour la première phrase seulement
             if (phraseIndex === 0) {
+                this.music2 = this.sound.add('boom');
+                this.music2.play();
+                this.music2.setVolume(0.8);
                 const shakeDuration = 800; // Durée du tremblement (en millisecondes)
                 const shakeIntensity = 0.004; // Intensité du tremblement (en pixels)
     

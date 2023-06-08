@@ -38,6 +38,7 @@ export class lvl4 extends Phaser.Scene {
         this.load.image('3_maga', 'assets/objects/3_maga.png');
         this.load.image('4_maga', 'assets/objects/4_maga.png');
         this.load.image('5_maga', 'assets/objects/5_maga.png');
+        this.load.audio('music', 'assets/objects/music.mp3');
         this.load.tilemapTiledJSON('map5', 'assets/maps/V1Lvl4.json');
         
         
@@ -66,13 +67,19 @@ export class lvl4 extends Phaser.Scene {
         this.tileset = this.map5.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map5.addTilesetImage('tilesetDecors', 'tilesetDecors');
         this.loin = this.map5.createLayer('loin', this.tilesetDecors);
+        this.loin.setScrollFactor(0.995,1);
         this.fond = this.map5.createLayer('fond', this.tilesetDecors);
         this.decors = this.map5.createLayer('decors', this.tilesetDecors);
         this.plateformes5 = this.map5.createLayer('Plateformes', this.tileset);
 
         this.plateformes5.setCollisionByProperty({estSolid: true});
 
-        this.sanctuaire = this.physics.add.sprite(5118, 3612, 'sanctuaire');
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('music', { loop: true });
+        this.music.play();
+        this.music.setVolume(0.1);
+
+        this.sanctuaire = this.physics.add.sprite(5118, 3625, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
         this.sanctuaire.body.setImmovable(true);
         
@@ -103,15 +110,16 @@ export class lvl4 extends Phaser.Scene {
         // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
         this.ennemiPetit = this.physics.add.group();
 
-        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
-        this.Mobs.objects.forEach(Mobs => {
-            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
-            this.ennemiPetit.add(this.Mobs_create);
+        this.MobsPetit = this.map5.getObjectLayer('ennemiPetit');
+        this.MobsPetit.objects.forEach(MobsPetit => {
+            this.MobsPetit_create = this.physics.add.sprite(MobsPetit.x + 85, MobsPetit.y + 70, 'ennemiPetit');
+            this.ennemiPetit.add(this.MobsPetit_create);
         });
 
 
         this.physics.add.collider(this.player, this.plateformes5, console.log("fref"));
         this.physics.add.collider(this.player, this.ennemiPetit, this.mort, null, this);
+        this.physics.add.collider(this.player, this.ennemiGrand, this.mort, null, this);
 
         // Créer le texte au-dessus du renard
         this.interactText = this.add.text(this.renard.x, this.renard.y - 150, 'E', { font: '24px Arial', fill: '#ffffff' });
@@ -140,6 +148,34 @@ export class lvl4 extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 22800, 12800);
         this.cameras.main.startFollow(this.player);
 
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nikkoL', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 29 , end : 29}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'renard',
+            frames: this.anims.generateFrameNumbers('renard', {start : 0 , end : 24}),
+            frameRate: 32,
+            repeat:-1
+        });
+
         this.cursorsUp = this.input.keyboard.addKey('Z');
         this.cursorsLeft = this.input.keyboard.addKey('Q')
         this.cursorsRight = this.input.keyboard.addKey('D')
@@ -156,14 +192,20 @@ export class lvl4 extends Phaser.Scene {
         console.log("le nombre de magatama :", this.nombreMagatama, "et le nombre sauvegarde", this.nombreSauvegarde);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-400);
+            this.player.anims.play('left', true);
+            this.player.setVelocityX(-375);
+            
+
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(400);
+            this.player.anims.play('right', true);
+            this.player.setVelocityX(375);
+
         } else {
             this.player.setVelocityX(0);
+            this.player.anims.play('idle', true);
         }
-    
-        // Saut
+
+    // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
             this.player.setVelocityY(-675);
@@ -233,6 +275,7 @@ export class lvl4 extends Phaser.Scene {
                 const moveY = (deltaY / distance) * speed;
     
                 this.renard.setVelocity(moveX, moveY);
+                this.renard.anims.play('renard', true);
             } else {
                 this.renard.setVelocity(0, 0);
             }
@@ -338,6 +381,7 @@ export class lvl4 extends Phaser.Scene {
         }
 
         if (this.player.x > 15810){
+            this.music.stop();
             this.scene.start("Village", {
                 nombreMagatama : this.nombreMagatama,
                 nombreSauvegarde : this.nombreSauvegarde,

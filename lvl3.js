@@ -30,6 +30,8 @@ export class lvl3 extends Phaser.Scene {
         this.load.image('ennemiPetit', 'assets/characters/ennemiPetit.png');
         this.load.image('ennemiGrand', 'assets/characters/ennemiGrand.png');
         this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
+        this.load.image('tireur', 'assets/characters/tireur.png');
+        this.load.image('tir', 'assets/characters/tir.png');
 
 
         this.load.image('tileset', 'assets/objects/tileset.png');
@@ -40,6 +42,7 @@ export class lvl3 extends Phaser.Scene {
         this.load.image('3_maga', 'assets/objects/3_maga.png');
         this.load.image('4_maga', 'assets/objects/4_maga.png');
         this.load.image('5_maga', 'assets/objects/5_maga.png');
+        this.load.audio('music', 'assets/objects/music.mp3');
         this.load.tilemapTiledJSON('map4', 'assets/maps/V1Lvl3.json');
         
         
@@ -60,16 +63,23 @@ export class lvl3 extends Phaser.Scene {
         //variable ennemis
         this.ennemisPetitGroup;
         this.ennemisGrandGroup;
+        this.ennemisTirGroup;
         
         this.map4 = this.add.tilemap('map4');
         this.tileset = this.map4.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map4.addTilesetImage('tilesetDecors', 'tilesetDecors');
         this.loin = this.map4.createLayer('loin', this.tilesetDecors);
+        this.loin.setScrollFactor(0.995,1);
         this.fond = this.map4.createLayer('fond', this.tilesetDecors);
         this.decors = this.map4.createLayer('decors', this.tilesetDecors);
         this.plateformes4 = this.map4.createLayer('Plateformes', this.tileset);
 
         this.plateformes4.setCollisionByProperty({estSolid: true});
+
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('music', { loop: true });
+        this.music.play();
+        this.music.setVolume(0.1);
 
         this.sanctuaire = this.physics.add.sprite(3327, 4630, 'sanctuaire');
         this.sanctuaire.setCollideWorldBounds(true);
@@ -99,21 +109,58 @@ export class lvl3 extends Phaser.Scene {
         // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
         this.ennemiPetit = this.physics.add.group();
 
-        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
-        this.Mobs.objects.forEach(Mobs => {
-            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
-            this.ennemiPetit.add(this.Mobs_create);
+        this.MobsPetit = this.map4.getObjectLayer('ennemiPetit');
+        this.MobsPetit.objects.forEach(MobsPetit => {
+            this.MobsPetit_create = this.physics.add.sprite(MobsPetit.x + 85, MobsPetit.y + 70, 'ennemiPetit');
+            this.ennemiPetit.add(this.MobsPetit_create);
         });
 
         // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
         this.ennemiGrand = this.physics.add.group();
 
-        this.MobsGrand = this.map2.getObjectLayer('ennemiGrand');
+        this.MobsGrand = this.map4.getObjectLayer('ennemiGrand');
         this.MobsGrand.objects.forEach(MobsGrand => {
-            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 130, MobsGrand.y + 16, 'ennemiGrand');
+            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 110, MobsGrand.y + 150, 'ennemiGrand');
             this.ennemiGrand.add(this.MobsGrand_create);
         });
 
+        /*// TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
+        this.ennemiTir = this.physics.add.group();
+
+        this.MobsTir = this.map4.getObjectLayer('ennemiTir');
+        this.MobsTir.objects.forEach(MobsTir => {
+            this.MobsTir_create = this.physics.add.sprite(MobsTir.x + 110, MobsTir.y + 64, 'Tireur');
+            this.ennemiTir.add(this.MobsGrand_create);
+        });
+
+        // Définir la distance de déplacement
+        var distance = 200;
+
+        // Animer le déplacement de l'ennemi
+        var tween = this.tweens.add({
+            targets: this.ennemiTir,
+            x: '+=' + distance, // Déplacement vers la droite
+            ease: 'Linear',
+            duration: 1000, // Durée du déplacement (en millisecondes)
+            yoyo: true, // Effectuer un retour en arrière
+            repeat: -1 // Répéter indéfiniment
+        });
+
+        // Créer les projectiles
+        var projectileGauche = this.ennemiTir.create(this.ennemiTir.x, this.ennemiTir.y, 'tir');
+        var projectileDroite = this.ennemiTir.create(this.ennemiTir.x, this.ennemiTir.y, 'tir');
+
+        // Configurer l'intervalle de tir régulier
+        var tirInterval = setInterval(function() {
+            // Tirer un projectile à gauche
+            projectileGauche.setVelocityX(-200);
+            
+            // Tirer un projectile à droite
+            projectileDroite.setVelocityX(200);
+        }, 1000); // Temps en millisecondes entre chaque tir
+        */
+
+        //COLLIDERS
         this.physics.add.collider(this.player, this.plateformes4);
         this.physics.add.collider(this.player, this.ennemiGrand, this.mort, null, this);
         this.physics.add.collider(this.player, this.ennemiPetit, this.mort, null, this);
@@ -147,6 +194,34 @@ export class lvl3 extends Phaser.Scene {
 
         //this.cursors = this.input.keyboard.createCursorKeys();
 
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nikkoL', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 29 , end : 29}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'renard',
+            frames: this.anims.generateFrameNumbers('renard', {start : 0 , end : 24}),
+            frameRate: 32,
+            repeat:-1
+        });
+
         this.cursorsUp = this.input.keyboard.addKey('Z');
         this.cursorsLeft = this.input.keyboard.addKey('Q')
         this.cursorsRight = this.input.keyboard.addKey('D')
@@ -162,24 +237,23 @@ export class lvl3 extends Phaser.Scene {
         
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-400);
+            this.player.anims.play('left', true);
+            this.player.setVelocityX(-375);
+            
+
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(400);
+            this.player.anims.play('right', true);
+            this.player.setVelocityX(375);
+
         } else {
             this.player.setVelocityX(0);
+            this.player.anims.play('idle', true);
         }
-    
-        // Saut
+
+    // Saut
         if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
             this.player.setVelocityY(-675);
-        }
-
-        // Dash (2eme Meca)
-        if(this.enfantAvecPlayer == true){
-            if(this.dashButton.isDown){
-                this.dash();
-            }
         }
 
         //Ajouter les images
@@ -232,6 +306,7 @@ export class lvl3 extends Phaser.Scene {
                 const moveY = (deltaY / distance) * speed;
     
                 this.renard.setVelocity(moveX, moveY);
+                this.renard.anims.play('renard', true);
             } else {
                 this.renard.setVelocity(0, 0);
             }
@@ -326,9 +401,11 @@ export class lvl3 extends Phaser.Scene {
         }
 
         if ( this.player.x > 16930){
+            this.music.stop();
             this.changedLevelVillage();
         }
         if (this.player.x < 200){
+            this.music.stop();
             this.scene.start("lvl4", {
                 nombreMagatama : this.nombreMagatama,
                 nombreSauvegarde : this.nombreSauvegarde,

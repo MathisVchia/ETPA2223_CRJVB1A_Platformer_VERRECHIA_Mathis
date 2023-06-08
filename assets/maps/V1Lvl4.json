@@ -232,8 +232,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":13439.3333333333,
-                 "y":768.666666666667
+                 "x":13439.3,
+                 "y":768.667
                 }, 
                 {
                  "class":"",
@@ -256,8 +256,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":11648.3333333333,
-                 "y":1919.66666666667
+                 "x":11648.3,
+                 "y":1919.67
                 }, 
                 {
                  "class":"",
@@ -304,7 +304,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":7552.66666666667,
+                 "x":7552.67,
                  "y":3456
                 }, 
                 {
@@ -329,7 +329,7 @@
                  "visible":true,
                  "width":0,
                  "x":7168,
-                 "y":3456.33333333333
+                 "y":3456.33
                 }, 
                 {
                  "class":"",
@@ -340,7 +340,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":7296.33333333333,
+                 "x":7296.33,
                  "y":3456
                 }, 
                 {
@@ -460,8 +460,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":1022.66666666667,
-                 "y":3071.33333333333
+                 "x":1022.67,
+                 "y":3071.33
                 }, 
                 {
                  "class":"",
@@ -472,7 +472,7 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":1280.33333333333,
+                 "x":1280.33,
                  "y":2432
                 }, 
                 {
@@ -496,8 +496,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":13823.6666666667,
-                 "y":2815.66666666667
+                 "x":13823.7,
+                 "y":2815.67
                 }, 
                 {
                  "class":"",
@@ -535,6 +535,25 @@
          "spacing":0,
          "tilecount":6,
          "tileheight":128,
+         "tiles":[
+                {
+                 "id":0,
+                 "properties":[
+                        {
+                         "name":"estSolid",
+                         "type":"bool",
+                         "value":true
+                        }]
+                }, 
+                {
+                 "id":3,
+                 "properties":[
+                        {
+                         "name":"estSolid",
+                         "type":"bool",
+                         "value":true
+                        }]
+                }],
          "tilewidth":128
         }, 
         {

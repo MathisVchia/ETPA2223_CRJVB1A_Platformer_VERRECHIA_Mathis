@@ -5,8 +5,10 @@ export class lvl2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('nikko', 'assets/characters/nikko.png', 
-            { frameWidth: 128, frameHeight: 256 });
+        this.load.spritesheet('nikko', 'assets/characters/nikkoWalking.png',
+            {frameWidth : 128, frameHeight : 256});
+        this.load.spritesheet('nikkoL', 'assets/characters/nikkoWalkingL.png',
+            {frameWidth : 128, frameHeight : 256});
         this.load.spritesheet('renard', 'assets/characters/renard.png',
             { frameWidth: 256, frameHeight: 128 });
         this.load.spritesheet('clef', 'assets/objects/clef.png',
@@ -17,10 +19,16 @@ export class lvl2 extends Phaser.Scene {
             { frameWidth: 640, frameHeight: 768 });
         this.load.spritesheet('sanctuaire', 'assets/objects/sanctuaire.png',
             { frameWidth: 128, frameHeight: 128 });
-        this.load.image('sauvegarde', 'assets/objects/sauvegarde.png');
-            //{ frameWidth: 128, frameHeight: 256 }
         this.load.image('ennemiPetit', 'assets/characters/ennemiPetit.png');
         this.load.image('ennemiGrand', 'assets/characters/ennemiGrand.png');
+
+        //background
+        this.load.image('ciel', 'assets/bg/ciel1.png');
+        this.load.image('ciel2', 'assets/bg/ciel2.png');
+        this.load.image('fuji1', 'assets/bg/fuji1.png');
+        this.load.image('fuji2', 'assets/bg/fuji2.png');
+        this.load.image('mont1', 'assets/bg/mont1.png');
+        this.load.image('mont2', 'assets/bg/mont2.png');
 
         this.load.image('tileset', 'assets/objects/tileset.png');
         this.load.image('tilesetDecors', 'assets/objects/tilesetDecors.png');
@@ -30,6 +38,7 @@ export class lvl2 extends Phaser.Scene {
         this.load.image('3_maga', 'assets/objects/3_maga.png');
         this.load.image('4_maga', 'assets/objects/4_maga.png');
         this.load.image('5_maga', 'assets/objects/5_maga.png');
+        this.load.audio('music', 'assets/objects/music.mp3');
         this.load.tilemapTiledJSON('map2', 'assets/maps/V1Lvl2.json');
     }
 
@@ -57,13 +66,39 @@ export class lvl2 extends Phaser.Scene {
         this.ennemisPetitGroup;
         this.ennemisGrandGroup;
 
+        /*
+        // affichage du background
+        this.backgroundParallax1 = this.add.tileSprite(0,0,9600,5120, "ciel");
+        this.backgroundParallax1.setOrigin(0,0);
+        this.backgroundParallax1.setScrollFactor(1,1);
+        this.backgroundParallax2 = this.add.tileSprite(5120,0,9600,5120, "ciel2");
+        this.backgroundParallax2.setOrigin(0,0);
+        this.backgroundParallax2.setScrollFactor(1,1);
+        this.backgroundParallax3 = this.add.tileSprite(10240,0,9600,5120, "ciel2");
+        this.backgroundParallax3.setOrigin(0,0);
+        this.backgroundParallax3.setScrollFactor(1,1);
+
+        this.backgroundParallax5 = this.add.tileSprite(0,0,9600,5120, "mont1");
+        this.backgroundParallax5.setOrigin(0,0);
+        this.backgroundParallax5.setScrollFactor(1,1);
+        this.backgroundParallax6 = this.add.tileSprite(5120,0,9600,5120, "mont2");
+        this.backgroundParallax6.setOrigin(0,0);
+        this.backgroundParallax6.setScrollFactor(0.9 ,1);
+        */
+
         this.map2 = this.add.tilemap('map2');
         this.tileset = this.map2.addTilesetImage('tileset', 'tileset');
         this.tilesetDecors = this.map2.addTilesetImage('tilesetDecors', 'tilesetDecors');
         this.loin = this.map2.createLayer('loin', this.tilesetDecors);
+        this.loin.setScrollFactor(0.995,1);
         this.fond = this.map2.createLayer('fond', this.tilesetDecors);
         this.decors = this.map2.createLayer('decors', this.tilesetDecors);
         this.plateformes2 = this.map2.createLayer('plateformes', this.tileset);
+
+        // Ajouter la musique et la jouer en boucle
+        this.music = this.sound.add('music', { loop: true });
+        this.music.play();
+        this.music.setVolume(0.1);
 
         this.plateformes2.setCollisionByProperty({ estSolid: true });
 
@@ -85,20 +120,15 @@ export class lvl2 extends Phaser.Scene {
         this.porte.setCollideWorldBounds(true);
         this.porte.body.setImmovable(true);
 
-
-        this.sauvegarde = this.physics.add.sprite(16000, 3070, 'sauvegarde');
-        this.sauvegarde.setCollideWorldBounds(true);
-        this.sauvegarde.body.setImmovable(true);
-
         this.magatamaImages = this.add.image(1000, 250, "0_maga").setScrollFactor(0);
 
         // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
         this.ennemiPetit = this.physics.add.group();
 
-        this.Mobs = this.map2.getObjectLayer('ennemiPetit');
-        this.Mobs.objects.forEach(Mobs => {
-            this.Mobs_create = this.physics.add.sprite(Mobs.x + 16, Mobs.y + 16, 'ennemiPetit');
-            this.ennemiPetit.add(this.Mobs_create);
+        this.MobsPetit = this.map2.getObjectLayer('ennemiPetit');
+        this.MobsPetit.objects.forEach(MobsPetit => {
+            this.MobsPetit_create = this.physics.add.sprite(MobsPetit.x + 85, MobsPetit.y + 70, 'ennemiPetit');
+            this.ennemiPetit.add(this.MobsPetit_create);
         });
 
         // TILED - load calque objet utilisés dans Tiled (pour des monstres, par exemple)
@@ -106,7 +136,7 @@ export class lvl2 extends Phaser.Scene {
 
         this.MobsGrand = this.map2.getObjectLayer('ennemiGrand');
         this.MobsGrand.objects.forEach(MobsGrand => {
-            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 130, MobsGrand.y + 16, 'ennemiGrand');
+            this.MobsGrand_create = this.physics.add.sprite(MobsGrand.x + 110, MobsGrand.y + 150, 'ennemiGrand');
             this.ennemiGrand.add(this.MobsGrand_create);
         });
 
@@ -145,6 +175,35 @@ export class lvl2 extends Phaser.Scene {
 
         //this.cursors = this.input.keyboard.createCursorKeys();
 
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nikkoL', {start : 0 , end : 37}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('nikko', {start : 29 , end : 29}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: 'renard',
+            frames: this.anims.generateFrameNumbers('renard', {start : 0 , end : 24}),
+            frameRate: 32,
+            repeat:-1
+        });
+
+
         this.cursorsUp = this.input.keyboard.addKey('Z');
         this.cursorsLeft = this.input.keyboard.addKey('Q');
         this.cursorsRight = this.input.keyboard.addKey('D');
@@ -160,17 +219,24 @@ export class lvl2 extends Phaser.Scene {
        // console.log(this.nombreMagatama);
         // ajout des moyens de déplacement du personnage
         if (this.cursorsLeft.isDown) {
-            this.player.setVelocityX(-1400);
+            this.player.anims.play('left', true);
+            this.player.setVelocityX(-375);
+            
+
         } else if (this.cursorsRight.isDown) {
-            this.player.setVelocityX(1400);
+            this.player.anims.play('right', true);
+            this.player.setVelocityX(375);
+
         } else {
             this.player.setVelocityX(0);
+            this.player.anims.play('idle', true);
         }
 
-        // Saut
-        if (this.cursorsUp.isDown && this.player.body.blocked.down) {
+    // Saut
+        if (this.cursorsUp.isDown && this.player.body.blocked.down){
             console.log("SAUTE")
-            this.player.setVelocityY(-1675);
+            this.player.setVelocityY(-675);
+            //this.player.anims.play('jump', true);
         }
 
         //Ajouter les images
@@ -225,6 +291,7 @@ export class lvl2 extends Phaser.Scene {
                 const moveY = (deltaY / distance) * speed;
 
                 this.renard.setVelocity(moveX, moveY);
+                this.renard.anims.play('renard', true);
             } else {
                 this.renard.setVelocity(0, 0);
             }
@@ -246,25 +313,9 @@ export class lvl2 extends Phaser.Scene {
                 console.log("TU TOUCHE")
                 this.openDoor();
             };
-            if (this.hasKey === false) {
-                const delay = 3000; // Temps d'affichage en millisecondes
-
-                const text = this.add.text(this.player.x, this.player.y - 200, "La porte est fermée... Où est passée cette foutue clef...", {
-                    font: "24px Arial",
-                    fill: "#ffffff"
-                });
-                text.setOrigin(0.5);
-
-                this.time.delayedCall(delay, () => {
-                    text.destroy(); // Supprime le texte après le délai spécifié
-                });
-            }
-        });
-
-        this.physics.add.overlap(this.player, this.sauvegarde, () => {
-            console.log("save")
-            this.recupSave();
-        });
+            });
+        
+        
 
         // Ajout collision joueur sanctuaire
         this.physics.add.overlap(this.player, this.sanctuaire, () => {
@@ -364,6 +415,7 @@ export class lvl2 extends Phaser.Scene {
         };
 
         if (this.player.x > 16930) {
+            this.music.stop();
             this.changedLevelVillage();
         }
     }
@@ -539,10 +591,6 @@ export class lvl2 extends Phaser.Scene {
             nombreSauvegarde: this.nombreSauvegarde,
             debutJeu: this.debutJeu
         });
-    }
-
-    recupSave() {
-        this.nombreMagatama = this.nombreSauvegarde;
     }
 
     mort() {
